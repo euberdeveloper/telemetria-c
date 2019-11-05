@@ -11,14 +11,13 @@
 
   SENDING_MESSAGE SETUP
   "sending_time":500,
-  "sending_throttle": 1,
-  "sending_brake": 1,
-  "sending_steering_wheel_encoder": 1,
-  "sending_front_wheels_encoder": 1,
-
-  SAVING_MESSAGE SETUP
-  "saving_throttle": 1,
-  "saving_brake": 1,
-  "saving_steering_wheel_encoder": 1,
-  "saving_front_wheels_encoder": 1
+  "sending_throttle": 40,
+  "sending_brake": 40,
+  "sending_steering_wheel_encoder": 40,
+  "sending_front_wheels_encoder": 40,
+  "sending_imu_gyro" : 40,
+  "sending_imu_axel" : 40,
+  "sending_gps_data" : 40,
+  "sending_bms_hv_data" : 40,
+  "sending_bms_lv_data" : 40 
 }
