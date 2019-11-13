@@ -1,0 +1,136 @@
+{
+    "id": "int",
+    "timestamp": "long",
+    "bms_hv": {
+        "temperature": [
+            {
+                "timestamp": "long",
+                "value": {
+                    "max": "double",
+                    "min": "double",
+                    "average": "double"
+                }
+            }
+        ],
+        "voltage": [
+            {
+                "timestamp": "long",
+                "value": {
+                    "max": "double",
+                    "min": "double",
+                    "total": "double"
+                }
+            }
+        ],
+        "current": [
+            {
+                "timestamp": "long",
+                "value": {
+                    "current": "double",
+                    "pow": "double"
+                }
+            }
+        ],
+        "errors": [
+            {
+                "timestamp": "long",
+                "value": {
+                    "code": "int",
+                    "index": "int",
+                    "value": "int"
+                }
+            }
+        ],
+        "warnings": [
+            {
+                "timestamp": "long",
+                "value": "int"
+            }
+        ]
+    },
+    "bms_lv": {
+        "values": [
+            {
+                "timestamp": "long",
+                "values": {
+                    "voltage": "double",
+                    "temperature_avg": "double",
+                    "temperature_max": "double"
+                }
+            }
+        ],
+        "errors": [
+             {
+                 "timestamp": "long",
+                 "value": "int"
+             }
+        ]
+    },
+    "gps": {
+        "latspd": [
+            {
+                "timestamp": "long",
+                "value": {
+                    "latitude": "double",
+                    "speed": "double",
+                    "lat_o": "double"
+                }
+            }
+        ],
+        "lonalt": [
+            {
+                "timestamp": "long",
+                "value": {
+                    "longitude": "double",
+                    "altitude": "double",
+                    "lon_o": "double"
+                }
+            }
+        ]
+    },
+    "imu_gyro": [
+        {
+            "timestamp": "long",
+            "value": {
+                "x": "double",
+                "y": "double",
+                "z": "double"
+            }
+        }
+    ],
+    "imu_axel": [
+        {
+            "timestamp": "long",
+            "value": {
+                "x": "double",
+                "y": "double",
+                "z": "double"
+            }
+        }
+    ],
+    "front_wheels_encoder": [
+        {
+            "timestamp": "long",
+            "value": "double"
+        }
+    ],
+    "steering_wheel_encoder": [
+        {
+            "timestamp": "long",
+            "value": "double"
+        }
+    ],
+    "throttle": [
+        {
+            "timestamp": "long",
+            "value": "double"
+        }
+    ],
+    "brake": [
+        {
+            "timestamp": "long",
+            "value": "double"
+        }
+    ],
+    "marker": "int"
+}

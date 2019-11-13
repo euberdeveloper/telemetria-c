@@ -1,0 +1,1 @@
+node structure_initializer_generator/js structure.json structure_initializer.c
