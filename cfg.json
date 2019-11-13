@@ -3,21 +3,27 @@
 	"broker_host": "localhost",
   "broker_port": 1883,
   "mqtt_topic": "test/log",
-
   "mongo_host": "localhost",
   "mongo_port": 27017,
   "mongo_db": "testnewtele",
   "mongo_collection": "testnew",
 
   SENDING_MESSAGE SETUP
-  "sending_time":500,
-  "sending_throttle": 40,
-  "sending_brake": 40,
-  "sending_steering_wheel_encoder": 40,
-  "sending_front_wheels_encoder": 40,
-  "sending_imu_gyro" : 40,
-  "sending_imu_axel" : 40,
-  "sending_gps_data" : 40,
-  "sending_bms_hv_data" : 40,
-  "sending_bms_lv_data" : 40 
+  "sending_time": 500,
+  "bms_hv_temperature_max_count": 500,
+  "bms_hv_voltage_max_count": 500,
+  "bms_hv_current_max_count": 500,
+  "bms_hv_errors_max_count": 500,
+  "bms_hv_warnings_max_count": 500,
+  "bms_lv_values_max_count": 500,
+  "bms_lv_errors_max_count": 500,
+  "gps_latspd_max_count": 500,
+  "gps_lonalt_max_count": 500,
+  "imu_gyro_xy_max_count": 500,
+  "imu_gyro_z_max_count": 500,
+  "imu_axel_max_count": 500,
+  "front_wheels_encoder_max_count": 500,
+  "steering_wheel_encoder_max_count": 500,
+  "throttle_max_count": 500,
+  "brake_max_count": 500
 }

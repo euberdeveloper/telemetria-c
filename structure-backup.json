@@ -52,7 +52,7 @@
         "values": [
             {
                 "timestamp": "long",
-                "value": {
+                "values": {
                     "voltage": "double",
                     "temperature_avg": "double",
                     "temperature_max": "double"
@@ -88,23 +88,16 @@
             }
         ]
     },
-    "imu_gyro": {
-        "xy": [
-            {
-                "timestamp": "long",
-                "value": {
-                    "x": "double",
-                    "y": "double"
-                }
+    "imu_gyro": [
+        {
+            "timestamp": "long",
+            "value": {
+                "x": "double",
+                "y": "double",
+                "z": "double"
             }
-        ],
-        "z": [
-            {
-                "timestamp": "long",
-                "value": "double"
-            }
-        ]
-    },
+        }
+    ],
     "imu_axel": [
         {
             "timestamp": "long",

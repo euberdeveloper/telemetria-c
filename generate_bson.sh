@@ -1,1 +1,0 @@
-node bson_generator/js structure.json generate_bson.c
