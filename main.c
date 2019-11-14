@@ -27,7 +27,7 @@ void handle_signal(int s);
 
 config_t *config_setup(const char *cfgpath);
 dbhandler_t *mongo_setup(config_t *cfg);
-data_t *data_setup(config_t *cfg);
+data_t *data_setup();
 mosq_t *mosquitto_setup(config_t *cfg);
 
 int data_gather(config_t *cfg, data_t *data);
@@ -122,7 +122,7 @@ int main(int argc, char const *argv[])
 					//send()
 			bson_t *sending;
 
-			can_data = data_setup(config_file);
+			can_data = data_setup();
 			data_gather(config_file, can_data);
 
 			data_elaborate(config_file, can_data, &sending);
@@ -268,71 +268,6 @@ config_t *config_setup(const char *cfgpath)
 		{
 			toRtn->sending_time = atoi(valueString);
 		}
-		else if (strcmp(keyString, "bms_hv_temperature_max_count") == 0)
-		{
-			toRtn->bms_hv_temperature_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_hv_voltage_max_count") == 0)
-		{
-			toRtn->bms_hv_voltage_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_hv_current_max_count") == 0)
-		{
-			toRtn->bms_hv_current_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_hv_errors_max_count") == 0)
-		{
-			toRtn->bms_hv_errors_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_hv_warnings_max_count") == 0)
-		{
-			toRtn->bms_hv_warnings_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_lv_values_max_count") == 0)
-		{
-			toRtn->bms_lv_values_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_lv_errors_max_count") == 0)
-		{
-			toRtn->bms_lv_errors_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "gps_latspd_max_count") == 0)
-		{
-			toRtn->gps_latspd_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "gps_lonalt_max_count") == 0)
-		{
-			toRtn->gps_lonalt_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "imu_gyro_xy_max_count") == 0)
-		{
-			toRtn->imu_gyro_xy_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "imu_gyro_z_max_count") == 0)
-		{
-			toRtn->imu_gyro_z_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "imu_axel_max_count") == 0)
-		{
-			toRtn->imu_axel_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "front_wheels_encoder_max_count") == 0)
-		{
-			toRtn->front_wheels_encoder_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "steering_wheel_encoder_max_count") == 0)
-		{
-			toRtn->steering_wheel_encoder_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "throttle_max_count") == 0)
-		{
-			toRtn->throttle_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "brake_max_count") == 0)
-		{
-			toRtn->brake_max_count = atoi(valueString);
-		}
-		
 	}
 	if (verbose)
 		printf("%s has generated a correct set of configurations.\n\n", cfgpath);
@@ -403,41 +338,41 @@ dbhandler_t *mongo_setup(config_t *cfg)
 
 	return toRtn;
 }
-data_t *data_setup(config_t *config)
+data_t *data_setup()
 {
 	data_t *data;
 	data = (data_t *)malloc(sizeof(data_t));
-	data->bms_hv.temperature = (bms_hv_temperature_data*)malloc(sizeof(bms_hv_temperature_data) * config->bms_hv_temperature_max_count);
+	data->bms_hv.temperature = (bms_hv_temperature_data*)malloc(sizeof(bms_hv_temperature_data) * 500);
 	data->bms_hv.temperature_count = 0;
-	data->bms_hv.voltage = (bms_hv_voltage_data*)malloc(sizeof(bms_hv_voltage_data) * config->bms_hv_voltage_max_count);
+	data->bms_hv.voltage = (bms_hv_voltage_data*)malloc(sizeof(bms_hv_voltage_data) * 500);
 	data->bms_hv.voltage_count = 0;
-	data->bms_hv.current = (bms_hv_current_data*)malloc(sizeof(bms_hv_current_data) * config->bms_hv_current_max_count);
+	data->bms_hv.current = (bms_hv_current_data*)malloc(sizeof(bms_hv_current_data) * 500);
 	data->bms_hv.current_count = 0;
-	data->bms_hv.errors = (bms_hv_errors_data*)malloc(sizeof(bms_hv_errors_data) * config->bms_hv_errors_max_count);
+	data->bms_hv.errors = (bms_hv_errors_data*)malloc(sizeof(bms_hv_errors_data) * 500);
 	data->bms_hv.errors_count = 0;
-	data->bms_hv.warnings = (bms_hv_warnings_data*)malloc(sizeof(bms_hv_warnings_data) * config->bms_hv_warnings_max_count);
+	data->bms_hv.warnings = (bms_hv_warnings_data*)malloc(sizeof(bms_hv_warnings_data) * 500);
 	data->bms_hv.warnings_count = 0;
-	data->bms_lv.values = (bms_lv_values_data*)malloc(sizeof(bms_lv_values_data) * config->bms_lv_values_max_count);
+	data->bms_lv.values = (bms_lv_values_data*)malloc(sizeof(bms_lv_values_data) * 500);
 	data->bms_lv.values_count = 0;
-	data->bms_lv.errors = (bms_lv_errors_data*)malloc(sizeof(bms_lv_errors_data) * config->bms_lv_errors_max_count);
+	data->bms_lv.errors = (bms_lv_errors_data*)malloc(sizeof(bms_lv_errors_data) * 500);
 	data->bms_lv.errors_count = 0;
-	data->gps.latspd = (gps_latspd_data*)malloc(sizeof(gps_latspd_data) * config->gps_latspd_max_count);
+	data->gps.latspd = (gps_latspd_data*)malloc(sizeof(gps_latspd_data) * 500);
 	data->gps.latspd_count = 0;
-	data->gps.lonalt = (gps_lonalt_data*)malloc(sizeof(gps_lonalt_data) * config->gps_lonalt_max_count);
+	data->gps.lonalt = (gps_lonalt_data*)malloc(sizeof(gps_lonalt_data) * 500);
 	data->gps.lonalt_count = 0;
-	data->imu_gyro.xy = (imu_gyro_xy_data*)malloc(sizeof(imu_gyro_xy_data) * config->imu_gyro_xy_max_count);
+	data->imu_gyro.xy = (imu_gyro_xy_data*)malloc(sizeof(imu_gyro_xy_data) * 500);
 	data->imu_gyro.xy_count = 0;
-	data->imu_gyro.z = (imu_gyro_z_data*)malloc(sizeof(imu_gyro_z_data) * config->imu_gyro_z_max_count);
+	data->imu_gyro.z = (imu_gyro_z_data*)malloc(sizeof(imu_gyro_z_data) * 500);
 	data->imu_gyro.z_count = 0;
-	data->imu_axel = (imu_axel_data*)malloc(sizeof(imu_axel_data) * config->imu_axel_max_count);
+	data->imu_axel = (imu_axel_data*)malloc(sizeof(imu_axel_data) * 500);
 	data->imu_axel_count = 0;
-	data->front_wheels_encoder = (front_wheels_encoder_data*)malloc(sizeof(front_wheels_encoder_data) * config->front_wheels_encoder_max_count);
+	data->front_wheels_encoder = (front_wheels_encoder_data*)malloc(sizeof(front_wheels_encoder_data) * 500);
 	data->front_wheels_encoder_count = 0;
-	data->steering_wheel_encoder = (steering_wheel_encoder_data*)malloc(sizeof(steering_wheel_encoder_data) * config->steering_wheel_encoder_max_count);
+	data->steering_wheel_encoder = (steering_wheel_encoder_data*)malloc(sizeof(steering_wheel_encoder_data) * 500);
 	data->steering_wheel_encoder_count = 0;
-	data->throttle = (throttle_data*)malloc(sizeof(throttle_data) * config->throttle_max_count);
+	data->throttle = (throttle_data*)malloc(sizeof(throttle_data) * 500);
 	data->throttle_count = 0;
-	data->brake = (brake_data*)malloc(sizeof(brake_data) * config->brake_max_count);
+	data->brake = (brake_data*)malloc(sizeof(brake_data) * 500);
 	data->brake_count = 0;
 	
 	return data;

@@ -13,10 +13,6 @@ class StructureInitializerCodeGenerator {
         return (this.keys.length === 1 ? this.keys[0] : `${this.keys.slice(1).join('_')}_data`);
     }
 
-    _getMaxCountName() {
-        return `${this.keys.slice(1).join('_')}_max_count`;
-    }
-
     _getCountName() {
         const last = this.keys.length - 1;
         return `${this.keys[last]}_count`;
@@ -39,8 +35,7 @@ class StructureInitializerCodeGenerator {
                 const count = this._getCountName();
                 const keysParent = this._parseKeysParent(count);
                 const type = this._getTypeName();
-                const maxCount = this._getMaxCountName();
-                this._print(`data${keys} = (${type}*)malloc(sizeof(${type}) * config->${maxCount});`);
+                this._print(`data${keys} = (${type}*)malloc(sizeof(${type}) * ${data[key][1]});`);
                 this._print(`data${keysParent} = 0;`);
                 this._parse(data[key][0]);
                 this.keys.pop();

@@ -27,7 +27,7 @@ void handle_signal(int s);
 
 config_t *config_setup(const char *cfgpath);
 dbhandler_t *mongo_setup(config_t *cfg);
-data_t *data_setup(config_t *cfg);
+data_t *data_setup();
 mosq_t *mosquitto_setup(config_t *cfg);
 
 int data_gather(config_t *cfg, data_t *data);
@@ -122,7 +122,7 @@ int main(int argc, char const *argv[])
 					//send()
 			bson_t *sending;
 
-			can_data = data_setup(config_file);
+			can_data = data_setup();
 			data_gather(config_file, can_data);
 
 			data_elaborate(config_file, can_data, &sending);
@@ -268,7 +268,6 @@ config_t *config_setup(const char *cfgpath)
 		{
 			toRtn->sending_time = atoi(valueString);
 		}
-		//{{GENERATE_CONFIG_INITIALIZER_CODE}}
 	}
 	if (verbose)
 		printf("%s has generated a correct set of configurations.\n\n", cfgpath);
@@ -339,7 +338,7 @@ dbhandler_t *mongo_setup(config_t *cfg)
 
 	return toRtn;
 }
-data_t *data_setup(config_t *config)
+data_t *data_setup()
 {
 	data_t *data;
 	data = (data_t *)malloc(sizeof(data_t));
