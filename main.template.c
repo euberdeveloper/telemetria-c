@@ -264,75 +264,11 @@ config_t *config_setup(const char *cfgpath)
 			toRtn->mongo_collection = (char *)malloc(sizeof(char) * lenght);
 			strcpy(toRtn->mongo_collection, valueString);
 		}
-
 		else if (strcmp(keyString, "sending_time") == 0)
 		{
 			toRtn->sending_time = atoi(valueString);
 		}
-		else if (strcmp(keyString, "throttle_max_count") == 0)
-		{
-			toRtn->throttle_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "brake_max_count") == 0)
-		{
-			toRtn->brake_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "steering_wheel_encoder_max_count") == 0)
-		{
-			toRtn->steering_wheel_encoder_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "front_wheels_encoder_max_count") == 0)
-		{
-			toRtn->front_wheels_encoder_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "imu_gyro_xy_max_count") == 0)
-		{
-			toRtn->imu_gyro_xy_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "imu_gyro_z_max_count") == 0)
-		{
-			toRtn->imu_gyro_z_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "imu_axel_max_count") == 0)
-		{
-			toRtn->imu_axel_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "gps_latspd_max_count") == 0)
-		{
-			toRtn->gps_latspd_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "gps_lonalt_max_count") == 0)
-		{
-			toRtn->gps_lonalt_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_hv_voltage_max_count") == 0)
-		{
-			toRtn->bms_hv_voltage_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_hv_temperature_max_count") == 0)
-		{
-			toRtn->bms_hv_temperature_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_hv_current_max_count") == 0)
-		{
-			toRtn->bms_hv_current_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_hv_errors_max_count") == 0)
-		{
-			toRtn->bms_hv_errors_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_hv_warnings_max_count") == 0)
-		{
-			toRtn->bms_hv_warnings_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_lv_values_max_count") == 0)
-		{
-			toRtn->bms_lv_values_max_count = atoi(valueString);
-		}
-		else if (strcmp(keyString, "bms_lv_errors_max_count") == 0)
-		{
-			toRtn->bms_lv_errors_max_count = atoi(valueString);
-		}
+		//{{GENERATE_CONFIG_INITIALIZER_CODE}}
 	}
 	if (verbose)
 		printf("%s has generated a correct set of configurations.\n\n", cfgpath);
