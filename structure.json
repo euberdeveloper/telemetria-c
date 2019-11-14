@@ -10,7 +10,7 @@
                     "min": "double",
                     "average": "double"
                 }
-            }
+            }, 500
         ],
         "voltage": [
             {
@@ -20,7 +20,7 @@
                     "min": "double",
                     "total": "double"
                 }
-            }
+            }, 500
         ],
         "current": [
             {
@@ -29,7 +29,7 @@
                     "current": "double",
                     "pow": "double"
                 }
-            }
+            }, 500
         ],
         "errors": [
             {
@@ -39,13 +39,13 @@
                     "index": "int",
                     "value": "int"
                 }
-            }
+            }, 500
         ],
         "warnings": [
             {
                 "timestamp": "long",
                 "value": "int"
-            }
+            }, 500
         ]
     },
     "bms_lv": {
@@ -57,13 +57,13 @@
                     "temperature_avg": "double",
                     "temperature_max": "double"
                 }
-            }
+            }, 500
         ],
         "errors": [
              {
                  "timestamp": "long",
                  "value": "int"
-             }
+             }, 500
         ]
     },
     "gps": {
@@ -75,7 +75,7 @@
                     "speed": "double",
                     "lat_o": "double"
                 }
-            }
+            }, 500
         ],
         "lonalt": [
             {
@@ -85,7 +85,7 @@
                     "altitude": "double",
                     "lon_o": "double"
                 }
-            }
+            }, 500
         ]
     },
     "imu_gyro": {
@@ -96,13 +96,13 @@
                     "x": "double",
                     "y": "double"
                 }
-            }
+            }, 500
         ],
         "z": [
             {
                 "timestamp": "long",
                 "value": "double"
-            }
+            }, 500
         ]
     },
     "imu_axel": [
@@ -113,31 +113,31 @@
                 "y": "double",
                 "z": "double"
             }
-        }
+        }, 500
     ],
     "front_wheels_encoder": [
         {
             "timestamp": "long",
             "value": "double"
-        }
+        }, 500
     ],
     "steering_wheel_encoder": [
         {
             "timestamp": "long",
             "value": "double"
-        }
+        }, 500
     ],
     "throttle": [
         {
             "timestamp": "long",
             "value": "double"
-        }
+        }, 500
     ],
     "brake": [
         {
             "timestamp": "long",
             "value": "double"
-        }
+        }, 500
     ],
     "marker": "int"
 }

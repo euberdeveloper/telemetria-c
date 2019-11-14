@@ -1,5 +1,4 @@
 {
-	GENERAL SETUP
 	"broker_host": "localhost",
   "broker_port": 1883,
   "mqtt_topic": "test/log",
@@ -8,7 +7,6 @@
   "mongo_db": "testnewtele",
   "mongo_collection": "testnew",
 
-  SENDING_MESSAGE SETUP
   "sending_time": 500,
   "bms_hv_temperature_max_count": 500,
   "bms_hv_voltage_max_count": 500,
