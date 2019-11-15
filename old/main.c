@@ -386,6 +386,7 @@ int data_gather(config_t* cfg, data_t* data) {
 	
 	int id, data1, data2; 
 
+	printf("gather ok");
 	do {
 		id = data1 = data2 = 0;
 		receive_can_compact(can_socket,&id,&data1,&data2);
@@ -513,6 +514,7 @@ int data_gather(config_t* cfg, data_t* data) {
 int data_elaborate(config_t* cfg, data_t* data, bson_t** sending) {
   
   //initialize both bsons.
+  printf("elaborate_ok");
   *sending = bson_new();
   
   bson_t child1, child2, child3, child4;
@@ -734,7 +736,9 @@ int data_elaborate(config_t* cfg, data_t* data, bson_t** sending) {
 	bson_append_array_end(&child1, &child2);
 	bson_append_document_end(*sending, &child1);
 
-return 0;}
+	BSON_APPEND_INT32(*sending, "marker", data->marker);
+
+	return 0;}
 int mongo_insert(bson_t *insert, dbhandler_t* handler) {
 	bson_error_t error;
 
