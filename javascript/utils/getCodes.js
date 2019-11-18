@@ -1,8 +1,8 @@
-function getCodes(generators, structure) {
+function getCodes(generators, structure, messages) {
     return Object.keys(generators)
         .map(key => ({
             comment: generators[key].comment,
-            code: (new generators[key].generator(structure)).generate()
+            code: (new generators[key].generator(structure, messages)).generate()
         }));
 }
 

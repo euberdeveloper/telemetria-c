@@ -1,4 +1,4 @@
-class BrainFuckGenerator {
+class ParseCanMessageCodeGenerator {
 
     _tabsFromIndentation() {
         let res = '';
@@ -125,9 +125,4 @@ class BrainFuckGenerator {
 
 }
 
-module.exports = BrainFuckGenerator;
-
-const structure = require('./structure.json');
-const messages = require('./messages.json');
-const generator = new BrainFuckGenerator(structure, messages);
-console.log(generator.generate());
+module.exports = ParseCanMessageCodeGenerator;

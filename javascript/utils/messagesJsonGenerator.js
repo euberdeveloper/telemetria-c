@@ -1,4 +1,4 @@
-class BrainFuck2Generator {
+class MessagesJsonGenerator {
 
     generate() {
         this.rows = this.header
@@ -31,7 +31,4 @@ class BrainFuck2Generator {
 
 }
 
-const fs = require('fs');
-const header = fs.readFileSync('./example.h', 'utf-8');
-const generator = new BrainFuck2Generator(header);
-console.log(JSON.stringify(generator.generate(), null, 2));
+module.exports = MessagesJsonGenerator;
