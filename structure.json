@@ -6,138 +6,20 @@
             {
                 "timestamp": "long",
                 "value": {
-                    "max": "double",
-                    "min": "double",
-                    "average": "double"
+                    "max": "double|DATA_TMAX",
+                    "min": "double|DATA_TMIN",
+                    "average": "double|BMS_HV_AVG"
                 }
-            }, 500
-        ],
-        "voltage": [
-            {
-                "timestamp": "long",
-                "value": {
-                    "max": "double",
-                    "min": "double",
-                    "total": "double"
-                }
-            }, 500
-        ],
-        "current": [
-            {
-                "timestamp": "long",
-                "value": {
-                    "current": "double",
-                    "pow": "double"
-                }
-            }, 500
-        ],
-        "errors": [
-            {
-                "timestamp": "long",
-                "value": {
-                    "code": "int",
-                    "index": "int",
-                    "value": "int"
-                }
-            }, 500
-        ],
-        "warnings": [
-            {
-                "timestamp": "long",
-                "value": "int"
-            }, 500
+            }, 500, "HV_TEMP"
         ]
     },
-    "bms_lv": {
-        "values": [
-            {
-                "timestamp": "long",
-                "value": {
-                    "voltage": "double",
-                    "temperature_avg": "double",
-                    "temperature_max": "double"
-                }
-            }, 500
-        ],
-        "errors": [
-             {
-                 "timestamp": "long",
-                 "value": "int"
-             }, 500
-        ]
-    },
-    "gps": {
-        "latspd": [
-            {
-                "timestamp": "long",
-                "value": {
-                    "latitude": "double",
-                    "speed": "double",
-                    "lat_o": "double"
-                }
-            }, 500
-        ],
-        "lonalt": [
-            {
-                "timestamp": "long",
-                "value": {
-                    "longitude": "double",
-                    "altitude": "double",
-                    "lon_o": "double"
-                }
-            }, 500
-        ]
-    },
-    "imu_gyro": {
-        "xy": [
-            {
-                "timestamp": "long",
-                "value": {
-                    "x": "double",
-                    "y": "double"
-                }
-            }, 500
-        ],
-        "z": [
-            {
-                "timestamp": "long",
-                "value": "double"
-            }, 500
-        ]
-    },
-    "imu_axel": [
-        {
-            "timestamp": "long",
-            "value": {
-                "x": "double",
-                "y": "double",
-                "z": "double"
-            }
-        }, 500
-    ],
-    "front_wheels_encoder": [
-        {
-            "timestamp": "long",
-            "value": "double"
-        }, 500
-    ],
-    "steering_wheel_encoder": [
-        {
-            "timestamp": "long",
-            "value": "double"
-        }, 500
-    ],
-    "throttle": [
-        {
-            "timestamp": "long",
-            "value": "double"
-        }, 500
-    ],
     "brake": [
         {
             "timestamp": "long",
-            "value": "double"
-        }, 500
-    ],
-    "marker": "int"
+            "value": {
+                "first": "double|BRK1",
+                "second": "double|BRK2"
+            }
+        }, 500, "PEDALS"
+    ]
 }

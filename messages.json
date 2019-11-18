@@ -1,0 +1,26 @@
+[
+    {
+        "name": "PEDALS",
+        "id": "0x01",
+        "byte0": "BRK1",
+        "byte1": "BRK2",
+        "byte2": "THR",
+        "byte3": "THR",
+        "byte4": "",
+        "byte5": "",
+        "byte6": "",
+        "byte7": ""
+    },
+    {
+        "name": "HV_TEMP",
+        "id": "0x02",
+        "byte0": "DATA_TMAX",
+        "byte1": "DATA_TMIN",
+        "byte2": "BMS_HV_AVG",
+        "byte3": "BMS_HV_AVG",
+        "byte4": "BMS_HV_AVG",
+        "byte5": "",
+        "byte6": "",
+        "byte7": ""
+    }
+]
