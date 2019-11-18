@@ -529,6 +529,11 @@ int data_gather(config_t *cfg, data_t *data)
 				data->front_wheels_encoder[data->front_wheels_encoder_count].timestamp = message_timestamp;
 				data->front_wheels_encoder[data->front_wheels_encoder_count++].value = ((data1 >> 16) & 255) * 256 + ((data1 >> 8) & 255);
 				break;
+
+			case 0x08: //kilometers
+				data->kilometers[data->kilometers_count].timestamp = message_timestamp;
+				data->kilometers[data->kilometers_count++].value = ((data1 >> 8) & 0x00FF);
+				break;
 			}
 			break;
 
