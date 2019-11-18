@@ -17,6 +17,10 @@ class StructureCodeGenerator {
         return res;
     }
 
+    _getTypeFromPrimitive(primitive) {
+        return primitive.split('|')[0];
+    }
+
     _getStructName() {
         return (this.prefixes.length === 1 ? this.prefixes[0] : `${this.prefixes.slice(1).join('_')}_data`);
     }
@@ -50,7 +54,7 @@ class StructureCodeGenerator {
                 this.prefixes.pop();
             }
             else {
-                this._print(`${data[key]} ${key};`);
+                this._print(`${this._getTypeFromPrimitive(data[key])} ${key};`);
             }
         }
         this.indentation = 0;

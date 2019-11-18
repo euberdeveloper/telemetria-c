@@ -26,6 +26,10 @@ class BsonCodeGenerator {
         return res;
     }
 
+    _getTypeFromPrimitive(primitive) {
+        return primitive.split('|')[0];
+    }
+
     _parseDepth() {
         return (this.depth === 0 ? '*sending' : `&children[${this.depth - 1}]`);
     }
@@ -70,7 +74,7 @@ class BsonCodeGenerator {
     }
 
     _parsePrimitive(data) {
-        switch (data) {
+        switch (this._getTypeFromPrimitive(data)) {
             case 'int':
                 this._print(`BSON_APPEND_INT32(${this._parseDepth()}, "${this._getKey()}", data${this._parseKeys()});`);
                 break;
