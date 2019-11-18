@@ -32,7 +32,7 @@ class ParseCanMessageCodeGenerator {
             }
         }
         if (start === null) {
-            console.error(`Error: not found ${name} in message ${message.name}`);
+            console.warn(`Warning: not found ${name} in message ${message.name}`);
             return;
         }
         for (let i = end, j = 0; i >= start; i--) {
@@ -66,6 +66,9 @@ class ParseCanMessageCodeGenerator {
             this._print(`}`);
             this._print(`break;`);
             this.indentation--;
+        }
+        else {
+            console.warn(`Warning: not found a message with name ${name}`);
         }
     }
 

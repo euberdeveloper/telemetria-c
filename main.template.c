@@ -598,3 +598,9 @@ struct tm *get_time()
 	timeinfo = localtime(&rawtime);
 	return timeinfo;
 }
+
+/*
+
+	//{{GENERATE_PARSE_CAN_MESSAGE_CODE}}
+
+*/
