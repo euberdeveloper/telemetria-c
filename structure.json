@@ -35,16 +35,18 @@
             {
                 "timestamp": "long",
                 "value": {
-                    "code": "int",
-                    "index": "int",
-                    "value": "int"
+                    "fault_id": "int",
+                    "fault_index": "int"
                 }
             }, 500
         ],
         "warnings": [
             {
                 "timestamp": "long",
-                "value": "int"
+                "value": {
+                    "fault_id": "int",
+                    "fault_index": "int"
+                }
             }, 500
         ]
     },
@@ -54,8 +56,7 @@
                 "timestamp": "long",
                 "value": {
                     "voltage": "double",
-                    "temperature_avg": "double",
-                    "temperature_max": "double"
+                    "temperature": "double"
                 }
             }, 500
         ],

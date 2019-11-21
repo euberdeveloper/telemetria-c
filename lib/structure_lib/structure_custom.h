@@ -2,54 +2,9 @@
 #define STRUCT_H
 
 #include <bson.h>
-#include <mongoc.h>
 
-typedef struct
-{
-    char *broker_host;
-    int broker_port;
-    char *mqtt_topic;
-
-    char *mongo_host;
-    int mongo_port;
-    char *mongo_db;
-    char *mongo_collection;
-
-    int sending_time;
-
-    int throttle_max_count;
-    int brake_max_count;
-    int steering_wheel_encoder_max_count;
-    int front_wheels_encoder_max_count;
-    int imu_gyro_xy_max_count;
-    int imu_gyro_z_max_count;
-    int imu_axel_max_count;
-    int gps_latspd_max_count;
-    int gps_lonalt_max_count;
-    int bms_hv_voltage_max_count;
-    int bms_hv_temperature_max_count;
-    int bms_hv_current_max_count;
-    int bms_hv_errors_max_count;
-    int bms_hv_warnings_max_count;
-    int bms_lv_values_max_count;
-    int bms_lv_errors_max_count;
-} config_t;
-
-typedef struct
-{
-    mongoc_uri_t *uri;
-    mongoc_client_t *client;
-    mongoc_database_t *database;
-    mongoc_collection_t *collection;
-} dbhandler_t;
-
-typedef struct {
-	struct mosquitto *handler;
-
-	char* broker_host;
-	int broker_port;
-	char* mqtt_topic;
-} mosq_t;
+extern int verbose;
+extern int receive_can_compact(int socket, int* id, int* data1, int*data2);
 
 typedef struct {
 	double max;
@@ -84,9 +39,8 @@ typedef struct {
 } bms_hv_current_data;
 
 typedef struct {
-	int code;
-	int index;
-	int value;
+	int fault_id;
+	int fault_index;
 } bms_hv_errors_value_data;
 
 typedef struct {
@@ -95,8 +49,13 @@ typedef struct {
 } bms_hv_errors_data;
 
 typedef struct {
+	int fault_id;
+	int fault_index;
+} bms_hv_warnings_value_data;
+
+typedef struct {
 	long timestamp;
-	int value;
+	bms_hv_warnings_value_data value;
 } bms_hv_warnings_data;
 
 typedef struct {
@@ -114,8 +73,7 @@ typedef struct {
 
 typedef struct {
 	double voltage;
-	double temperature_avg;
-	double temperature_max;
+	double temperature;
 } bms_lv_values_value_data;
 
 typedef struct {
@@ -238,5 +196,9 @@ typedef struct {
 } data_t;
 
 
+data_t* data_setup();
+int data_elaborate(data_t* data, bson_t** sending);
+int data_quit(data_t* data);
+int data_gather(data_t* data, int timing, int socket);
 
 #endif

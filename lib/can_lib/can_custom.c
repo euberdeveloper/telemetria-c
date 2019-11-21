@@ -1,4 +1,4 @@
-#include "can_custom_lib.h"
+#include "can_custom.h"
 
 int open_can_socket(char* can_device, struct sockaddr_can* addr) {
 	int s;
@@ -14,8 +14,6 @@ int open_can_socket(char* can_device, struct sockaddr_can* addr) {
 	strcpy(ifr.ifr_name, can_device);
 	ioctl(s, SIOCGIFINDEX, &ifr);
 
-
-	//addr = (struct (sockaddr_can*)) malloc(sizeof(sockaddr_can));
 	(*addr).can_family = AF_CAN;
 	(*addr).can_ifindex = ifr.ifr_ifindex;
 

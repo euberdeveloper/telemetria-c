@@ -3,7 +3,7 @@
  *
  * Enhancement of the can utils lib for linux
  * *          
- * This is a lib done exclusively for the FSAE Eagle Racing Team, from the University of Trento.
+ * This is a lib done exclusively by and for the FSAE Eagle Racing Team, from the University of Trento.
  * Everything is built on top of the raw canbus.
  *
  * See the examples to understand its full usage
