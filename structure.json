@@ -72,9 +72,10 @@
             {
                 "timestamp": "long",
                 "value": {
-                    "latitude": "double",
-                    "speed": "double",
-                    "lat_o": "double"
+                    "latitude_ih": "double",
+                    "latitude_il": "double",
+                    "latitude_o": "double",
+                    "speed": "double"
                 }
             }, 500
         ],
@@ -82,37 +83,33 @@
             {
                 "timestamp": "long",
                 "value": {
-                    "longitude": "double",
-                    "altitude": "double",
-                    "lon_o": "double"
+                    "longitude_ih": "double",
+                    "longitude_il": "double",
+                    "longitude_o": "double",
+                    "altitude": "double"
                 }
             }, 500
         ]
     },
-    "imu_gyro": {
-        "xy": [
-            {
-                "timestamp": "long",
-                "value": {
-                    "x": "double",
-                    "y": "double"
-                }
-            }, 500
-        ],
-        "z": [
-            {
-                "timestamp": "long",
-                "value": "double"
-            }, 500
-        ]
-    },
-    "imu_axel": [
+    "imu_gyro": [
         {
             "timestamp": "long",
             "value": {
                 "x": "double",
                 "y": "double",
-                "z": "double"
+                "z": "double",
+                "scale": "double"
+            }
+        }, 500
+    ],
+    "imu_accel": [
+        {
+            "timestamp": "long",
+            "value": {
+                "x": "double",
+                "y": "double",
+                "z": "double",
+                "scale": "double"
             }
         }, 500
     ],
@@ -126,6 +123,17 @@
         {
             "timestamp": "long",
             "value": "double"
+        }, 500
+    ],
+    "distance": [
+        {
+            "timestamp": "long",
+            "value": {
+                "meters": "double",
+                "rotations": "double",
+                "angle": "double",
+                "clock_period": "double"
+            }
         }, 500
     ],
     "throttle": [

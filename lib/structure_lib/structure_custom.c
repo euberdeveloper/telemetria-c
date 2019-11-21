@@ -23,16 +23,16 @@ data_t* data_setup() {
 	data->gps.latspd_count = 0;
 	data->gps.lonalt = (gps_lonalt_data*)malloc(sizeof(gps_lonalt_data) * 500);
 	data->gps.lonalt_count = 0;
-	data->imu_gyro.xy = (imu_gyro_xy_data*)malloc(sizeof(imu_gyro_xy_data) * 500);
-	data->imu_gyro.xy_count = 0;
-	data->imu_gyro.z = (imu_gyro_z_data*)malloc(sizeof(imu_gyro_z_data) * 500);
-	data->imu_gyro.z_count = 0;
-	data->imu_axel = (imu_axel_data*)malloc(sizeof(imu_axel_data) * 500);
-	data->imu_axel_count = 0;
+	data->imu_gyro = (imu_gyro_data*)malloc(sizeof(imu_gyro_data) * 500);
+	data->imu_gyro_count = 0;
+	data->imu_accel = (imu_accel_data*)malloc(sizeof(imu_accel_data) * 500);
+	data->imu_accel_count = 0;
 	data->front_wheels_encoder = (front_wheels_encoder_data*)malloc(sizeof(front_wheels_encoder_data) * 500);
 	data->front_wheels_encoder_count = 0;
 	data->steering_wheel_encoder = (steering_wheel_encoder_data*)malloc(sizeof(steering_wheel_encoder_data) * 500);
 	data->steering_wheel_encoder_count = 0;
+	data->distance = (distance_data*)malloc(sizeof(distance_data) * 500);
+	data->distance_count = 0;
 	data->throttle = (throttle_data*)malloc(sizeof(throttle_data) * 500);
 	data->throttle_count = 0;
 	data->brake = (brake_data*)malloc(sizeof(brake_data) * 500);
@@ -162,9 +162,10 @@ int data_elaborate(data_t* data, bson_t** sending) {
 		BSON_APPEND_DOCUMENT_BEGIN(&children[1], "0", &children[2]);
 		BSON_APPEND_INT64(&children[2], "timestamp", data->gps.latspd[i].timestamp);
 		BSON_APPEND_DOCUMENT_BEGIN(&children[2], "value", &children[3]);
-		BSON_APPEND_DOUBLE(&children[3], "latitude", data->gps.latspd[i].value.latitude);
+		BSON_APPEND_DOUBLE(&children[3], "latitude_ih", data->gps.latspd[i].value.latitude_ih);
+		BSON_APPEND_DOUBLE(&children[3], "latitude_il", data->gps.latspd[i].value.latitude_il);
+		BSON_APPEND_DOUBLE(&children[3], "latitude_o", data->gps.latspd[i].value.latitude_o);
 		BSON_APPEND_DOUBLE(&children[3], "speed", data->gps.latspd[i].value.speed);
-		BSON_APPEND_DOUBLE(&children[3], "lat_o", data->gps.latspd[i].value.lat_o);
 		bson_append_document_end(&children[2], &children[3]);
 		bson_destroy(&children[3]);
 		bson_append_document_end(&children[1], &children[2]);
@@ -178,9 +179,10 @@ int data_elaborate(data_t* data, bson_t** sending) {
 		BSON_APPEND_DOCUMENT_BEGIN(&children[1], "0", &children[2]);
 		BSON_APPEND_INT64(&children[2], "timestamp", data->gps.lonalt[i].timestamp);
 		BSON_APPEND_DOCUMENT_BEGIN(&children[2], "value", &children[3]);
-		BSON_APPEND_DOUBLE(&children[3], "longitude", data->gps.lonalt[i].value.longitude);
+		BSON_APPEND_DOUBLE(&children[3], "longitude_ih", data->gps.lonalt[i].value.longitude_ih);
+		BSON_APPEND_DOUBLE(&children[3], "longitude_il", data->gps.lonalt[i].value.longitude_il);
+		BSON_APPEND_DOUBLE(&children[3], "longitude_o", data->gps.lonalt[i].value.longitude_o);
 		BSON_APPEND_DOUBLE(&children[3], "altitude", data->gps.lonalt[i].value.altitude);
-		BSON_APPEND_DOUBLE(&children[3], "lon_o", data->gps.lonalt[i].value.lon_o);
 		bson_append_document_end(&children[2], &children[3]);
 		bson_destroy(&children[3]);
 		bson_append_document_end(&children[1], &children[2]);
@@ -190,44 +192,33 @@ int data_elaborate(data_t* data, bson_t** sending) {
 	bson_destroy(&children[1]);
 	bson_append_document_end(*sending, &children[0]);
 	bson_destroy(&children[0]);
-	BSON_APPEND_DOCUMENT_BEGIN(*sending, "imu_gyro", &children[0]);
-	BSON_APPEND_ARRAY_BEGIN(&children[0], "xy", &children[1]);
-	for (int i = 0; i < (data->imu_gyro.xy_count); i++)
-	{
-		BSON_APPEND_DOCUMENT_BEGIN(&children[1], "0", &children[2]);
-		BSON_APPEND_INT64(&children[2], "timestamp", data->imu_gyro.xy[i].timestamp);
-		BSON_APPEND_DOCUMENT_BEGIN(&children[2], "value", &children[3]);
-		BSON_APPEND_DOUBLE(&children[3], "x", data->imu_gyro.xy[i].value.x);
-		BSON_APPEND_DOUBLE(&children[3], "y", data->imu_gyro.xy[i].value.y);
-		bson_append_document_end(&children[2], &children[3]);
-		bson_destroy(&children[3]);
-		bson_append_document_end(&children[1], &children[2]);
-		bson_destroy(&children[2]);
-	}
-	bson_append_array_end(&children[0], &children[1]);
-	bson_destroy(&children[1]);
-	BSON_APPEND_ARRAY_BEGIN(&children[0], "z", &children[1]);
-	for (int i = 0; i < (data->imu_gyro.z_count); i++)
-	{
-		BSON_APPEND_DOCUMENT_BEGIN(&children[1], "0", &children[2]);
-		BSON_APPEND_INT64(&children[2], "timestamp", data->imu_gyro.z[i].timestamp);
-		BSON_APPEND_DOUBLE(&children[2], "value", data->imu_gyro.z[i].value);
-		bson_append_document_end(&children[1], &children[2]);
-		bson_destroy(&children[2]);
-	}
-	bson_append_array_end(&children[0], &children[1]);
-	bson_destroy(&children[1]);
-	bson_append_document_end(*sending, &children[0]);
-	bson_destroy(&children[0]);
-	BSON_APPEND_ARRAY_BEGIN(*sending, "imu_axel", &children[0]);
-	for (int i = 0; i < (data->imu_axel_count); i++)
+	BSON_APPEND_ARRAY_BEGIN(*sending, "imu_gyro", &children[0]);
+	for (int i = 0; i < (data->imu_gyro_count); i++)
 	{
 		BSON_APPEND_DOCUMENT_BEGIN(&children[0], "0", &children[1]);
-		BSON_APPEND_INT64(&children[1], "timestamp", data->imu_axel[i].timestamp);
+		BSON_APPEND_INT64(&children[1], "timestamp", data->imu_gyro[i].timestamp);
 		BSON_APPEND_DOCUMENT_BEGIN(&children[1], "value", &children[2]);
-		BSON_APPEND_DOUBLE(&children[2], "x", data->imu_axel[i].value.x);
-		BSON_APPEND_DOUBLE(&children[2], "y", data->imu_axel[i].value.y);
-		BSON_APPEND_DOUBLE(&children[2], "z", data->imu_axel[i].value.z);
+		BSON_APPEND_DOUBLE(&children[2], "x", data->imu_gyro[i].value.x);
+		BSON_APPEND_DOUBLE(&children[2], "y", data->imu_gyro[i].value.y);
+		BSON_APPEND_DOUBLE(&children[2], "z", data->imu_gyro[i].value.z);
+		BSON_APPEND_DOUBLE(&children[2], "scale", data->imu_gyro[i].value.scale);
+		bson_append_document_end(&children[1], &children[2]);
+		bson_destroy(&children[2]);
+		bson_append_document_end(&children[0], &children[1]);
+		bson_destroy(&children[1]);
+	}
+	bson_append_array_end(*sending, &children[0]);
+	bson_destroy(&children[0]);
+	BSON_APPEND_ARRAY_BEGIN(*sending, "imu_accel", &children[0]);
+	for (int i = 0; i < (data->imu_accel_count); i++)
+	{
+		BSON_APPEND_DOCUMENT_BEGIN(&children[0], "0", &children[1]);
+		BSON_APPEND_INT64(&children[1], "timestamp", data->imu_accel[i].timestamp);
+		BSON_APPEND_DOCUMENT_BEGIN(&children[1], "value", &children[2]);
+		BSON_APPEND_DOUBLE(&children[2], "x", data->imu_accel[i].value.x);
+		BSON_APPEND_DOUBLE(&children[2], "y", data->imu_accel[i].value.y);
+		BSON_APPEND_DOUBLE(&children[2], "z", data->imu_accel[i].value.z);
+		BSON_APPEND_DOUBLE(&children[2], "scale", data->imu_accel[i].value.scale);
 		bson_append_document_end(&children[1], &children[2]);
 		bson_destroy(&children[2]);
 		bson_append_document_end(&children[0], &children[1]);
@@ -252,6 +243,23 @@ int data_elaborate(data_t* data, bson_t** sending) {
 		BSON_APPEND_DOCUMENT_BEGIN(&children[0], "0", &children[1]);
 		BSON_APPEND_INT64(&children[1], "timestamp", data->steering_wheel_encoder[i].timestamp);
 		BSON_APPEND_DOUBLE(&children[1], "value", data->steering_wheel_encoder[i].value);
+		bson_append_document_end(&children[0], &children[1]);
+		bson_destroy(&children[1]);
+	}
+	bson_append_array_end(*sending, &children[0]);
+	bson_destroy(&children[0]);
+	BSON_APPEND_ARRAY_BEGIN(*sending, "distance", &children[0]);
+	for (int i = 0; i < (data->distance_count); i++)
+	{
+		BSON_APPEND_DOCUMENT_BEGIN(&children[0], "0", &children[1]);
+		BSON_APPEND_INT64(&children[1], "timestamp", data->distance[i].timestamp);
+		BSON_APPEND_DOCUMENT_BEGIN(&children[1], "value", &children[2]);
+		BSON_APPEND_DOUBLE(&children[2], "meters", data->distance[i].value.meters);
+		BSON_APPEND_DOUBLE(&children[2], "rotations", data->distance[i].value.rotations);
+		BSON_APPEND_DOUBLE(&children[2], "angle", data->distance[i].value.angle);
+		BSON_APPEND_DOUBLE(&children[2], "clock_period", data->distance[i].value.clock_period);
+		bson_append_document_end(&children[1], &children[2]);
+		bson_destroy(&children[2]);
 		bson_append_document_end(&children[0], &children[1]);
 		bson_destroy(&children[1]);
 	}
@@ -294,11 +302,11 @@ int data_quit(data_t* data) {
 	free(data->bms_lv.errors);
 	free(data->gps.latspd);
 	free(data->gps.lonalt);
-	free(data->imu_gyro.xy);
-	free(data->imu_gyro.z);
-	free(data->imu_axel);
+	free(data->imu_gyro);
+	free(data->imu_accel);
 	free(data->front_wheels_encoder);
 	free(data->steering_wheel_encoder);
+	free(data->distance);
 	free(data->throttle);
 	free(data->brake);
 	free(data);
@@ -373,28 +381,23 @@ int data_gather(data_t* data, int timing, int socket) {
 
 			case (0xC0): //IMU and SWE
 				switch (firstByte) {
-					case 0x03: //XY
-						//OK
-						data->imu_gyro.xy[data->imu_gyro.xy_count].timestamp = message_timestamp;
-						data->imu_gyro.xy[data->imu_gyro.xy_count].value.x = (data1 >> 8) & 0x0000FFFF;
-						data->imu_gyro.xy[data->imu_gyro.xy_count++].value.y = (data2 >> 16) & 0x0000FFFF;
+					case 0x00: // IMU GYRO
+						data->imu_gyro[data->imu_gyro_count].timestamp = message_timestamp;
+						data->imu_gyro[data->imu_gyro_count].value.x = (data1 >> 8) & 0x0000FFFF;
+						data->imu_gyro[data->imu_gyro_count].value.y = ((data1 & 0x000000FF) * 0xFF) + ((data2 >> 24) & 0x000000FF);
+						data->imu_gyro[data->imu_gyro_count].value.z = (data2 >> 8) & 0x0000FFFF;
+						data->imu_gyro[data->imu_gyro_count++].value.scale = ((data2 >> 24) & 0x000000FF) / 10;
 					break;
 
-					case 0x04: //Z
-						//OK
-						data->imu_gyro.z[data->imu_gyro.z_count].timestamp = message_timestamp;
-						data->imu_gyro.z[data->imu_gyro.z_count++].value = (data1 >> 8) & 0x0000FFFF;
-					break;
-
-					case 0x05: //axel
-						//OK
-						data->imu_axel[data->imu_axel_count].timestamp = message_timestamp;
-						data->imu_axel[data->imu_axel_count].value.x = ((data1 >> 16) & 255) * 256 + ((data1 >> 8) & 255);
-						data->imu_axel[data->imu_axel_count].value.y = ((data1) & 255) * 256 + ((data2 >> 24) & 255);
-						data->imu_axel[data->imu_axel_count++].value.z = ((data2 >> 16) & 255) * 256 + ((data2 >> 8) & 255);
+					case 0x05: // IMU AXEL
+						data->imu_accel[data->imu_accel_count].timestamp = message_timestamp;
+						data->imu_accel[data->imu_accel_count].value.x = (data1 >> 8) & 0x0000FFFF;
+						data->imu_accel[data->imu_accel_count].value.y = ((data1 & 0x000000FF) * 0xFF) + ((data2 >> 24) & 0x000000FF);
+						data->imu_accel[data->imu_accel_count].value.z = (data2 >> 8) & 0x0000FFFF;
+						data->imu_accel[data->imu_accel_count++].value.scale = (data2 >> 24) & 0x000000FF;
 					break;
 				
-					case 0x02: //steering wheel
+					case 0x02: // STEERING WHEEL ENCODER
 						data->steering_wheel_encoder[data->steering_wheel_encoder_count].timestamp = message_timestamp;
 						data->steering_wheel_encoder[data->steering_wheel_encoder_count++].value = ((data1 >> 16) & 255);
 					break;
@@ -404,24 +407,32 @@ int data_gather(data_t* data, int timing, int socket) {
 			case (0xD0): //GPS and FWE
 				switch (firstByte) {
 					case 0x01: //lat and speed
-						//OK
 						data->gps.latspd[data->gps.latspd_count].timestamp = message_timestamp;
-						data->gps.latspd[data->gps.latspd_count].value.latitude  = (((data1 >> 16) & 255)*256 + ((data1 >> 8) & 255)) * 100000 + ((data1 & 255)*256+((data2 >> 24) & 255));
-						data->gps.latspd[data->gps.latspd_count].value.speed = (((data2 >> 8) & 255) *256) + (data2 & 255);
-						data->gps.latspd[data->gps.latspd_count++].value.lat_o = data2 >> 16 & 255;
+						data->gps.latspd[data->gps.latspd_count].value.latitude_ih  = (data1 >> 8) & 0x0000FFFF;
+						data->gps.latspd[data->gps.latspd_count].value.latitude_il = ((data1 & 0x000000FF) * 0xFF) + ((data2 >> 24) & 0x000000FF);
+						data->gps.latspd[data->gps.latspd_count].value.latitude_o  = (data2 >> 16) & 0x000000FF;
+						data->gps.latspd[data->gps.latspd_count++].value.speed = data2 & 0x0000FFFF;
 					break;
 
 					case 0x02: //lon and altitude
-						//OK
 						data->gps.lonalt[data->gps.lonalt_count].timestamp = message_timestamp;
-						data->gps.lonalt[data->gps.lonalt_count].value.longitude  = (((data1 >> 16) & 255)*256 + ((data1 >> 8) & 255)) * 100000 + ((data1 & 255)*256+((data2 >> 24) & 255));
-						data->gps.lonalt[data->gps.lonalt_count].value.altitude = (((data2 >> 8) & 255) *256) + (data2 & 255);
-						data->gps.lonalt[data->gps.lonalt_count++].value.lon_o = data2 >> 16 & 255;
+						data->gps.lonalt[data->gps.lonalt_count].value.longitude_ih  = (data1 >> 8) & 0x0000FFFF;
+						data->gps.lonalt[data->gps.lonalt_count].value.longitude_il = ((data1 & 0x000000FF) * 0xFF) + ((data2 >> 24) & 0x000000FF);
+						data->gps.lonalt[data->gps.lonalt_count].value.longitude_o  = (data2 >> 16) & 0x000000FF;
+						data->gps.lonalt[data->gps.lonalt_count++].value.altitude = data2 & 0x0000FFFF;
 					break;
 
 					case 0x06: //front wheels
 						data->front_wheels_encoder[data->front_wheels_encoder_count].timestamp = message_timestamp;
 						data->front_wheels_encoder[data->front_wheels_encoder_count++].value = ((data1 >> 16) & 255) *256 + ((data1 >> 8) & 255);
+					break;
+
+					case 0x08: // DISTANCE
+						data->distance[data->distance_count].timestamp = message_timestamp;
+						data->distance[data->distance_count].value.meters = (data1 >> 8) & 0x0000FFFF;
+						data->distance[data->distance_count].value.rotations = ((data1 & 0x000000FF) * 0xFF) + ((data2 >> 24) & 0x000000FF);
+						data->distance[data->distance_count].value.angle = (data2 >> 16) & 0x000000F;
+						data->distance[data->distance_count++].value.clock_period = (data2 >> 8) & 0x000000F;
 					break;
 				}
 			break;

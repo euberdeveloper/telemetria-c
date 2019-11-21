@@ -94,9 +94,10 @@ typedef struct {
 } bms_lv_data;
 
 typedef struct {
-	double latitude;
+	double latitude_ih;
+	double latitude_il;
+	double latitude_o;
 	double speed;
-	double lat_o;
 } gps_latspd_value_data;
 
 typedef struct {
@@ -105,9 +106,10 @@ typedef struct {
 } gps_latspd_data;
 
 typedef struct {
-	double longitude;
+	double longitude_ih;
+	double longitude_il;
+	double longitude_o;
 	double altitude;
-	double lon_o;
 } gps_lonalt_value_data;
 
 typedef struct {
@@ -125,35 +127,26 @@ typedef struct {
 typedef struct {
 	double x;
 	double y;
-} imu_gyro_xy_value_data;
+	double z;
+	double scale;
+} imu_gyro_value_data;
 
 typedef struct {
 	long timestamp;
-	imu_gyro_xy_value_data value;
-} imu_gyro_xy_data;
-
-typedef struct {
-	long timestamp;
-	double value;
-} imu_gyro_z_data;
-
-typedef struct {
-	imu_gyro_xy_data *xy;
-	int xy_count;
-	imu_gyro_z_data *z;
-	int z_count;
+	imu_gyro_value_data value;
 } imu_gyro_data;
 
 typedef struct {
 	double x;
 	double y;
 	double z;
-} imu_axel_value_data;
+	double scale;
+} imu_accel_value_data;
 
 typedef struct {
 	long timestamp;
-	imu_axel_value_data value;
-} imu_axel_data;
+	imu_accel_value_data value;
+} imu_accel_data;
 
 typedef struct {
 	long timestamp;
@@ -164,6 +157,18 @@ typedef struct {
 	long timestamp;
 	double value;
 } steering_wheel_encoder_data;
+
+typedef struct {
+	double meters;
+	double rotations;
+	double angle;
+	double clock_period;
+} distance_value_data;
+
+typedef struct {
+	long timestamp;
+	distance_value_data value;
+} distance_data;
 
 typedef struct {
 	long timestamp;
@@ -181,13 +186,16 @@ typedef struct {
 	bms_hv_data bms_hv;
 	bms_lv_data bms_lv;
 	gps_data gps;
-	imu_gyro_data imu_gyro;
-	imu_axel_data *imu_axel;
-	int imu_axel_count;
+	imu_gyro_data *imu_gyro;
+	int imu_gyro_count;
+	imu_accel_data *imu_accel;
+	int imu_accel_count;
 	front_wheels_encoder_data *front_wheels_encoder;
 	int front_wheels_encoder_count;
 	steering_wheel_encoder_data *steering_wheel_encoder;
 	int steering_wheel_encoder_count;
+	distance_data *distance;
+	int distance_count;
 	throttle_data *throttle;
 	int throttle_count;
 	brake_data *brake;

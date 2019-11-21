@@ -86,28 +86,23 @@ int data_gather(data_t* data, int timing, int socket) {
 
 			case (0xC0): //IMU and SWE
 				switch (firstByte) {
-					case 0x03: //XY
-						//OK
-						data->imu_gyro.xy[data->imu_gyro.xy_count].timestamp = message_timestamp;
-						data->imu_gyro.xy[data->imu_gyro.xy_count].value.x = (data1 >> 8) & 0x0000FFFF;
-						data->imu_gyro.xy[data->imu_gyro.xy_count++].value.y = (data2 >> 16) & 0x0000FFFF;
+					case 0x00: // IMU GYRO
+						data->imu_gyro[data->imu_gyro_count].timestamp = message_timestamp;
+						data->imu_gyro[data->imu_gyro_count].value.x = (data1 >> 8) & 0x0000FFFF;
+						data->imu_gyro[data->imu_gyro_count].value.y = ((data1 & 0x000000FF) * 0xFF) + ((data2 >> 24) & 0x000000FF);
+						data->imu_gyro[data->imu_gyro_count].value.z = (data2 >> 8) & 0x0000FFFF;
+						data->imu_gyro[data->imu_gyro_count++].value.scale = ((data2 >> 24) & 0x000000FF) / 10;
 					break;
 
-					case 0x04: //Z
-						//OK
-						data->imu_gyro.z[data->imu_gyro.z_count].timestamp = message_timestamp;
-						data->imu_gyro.z[data->imu_gyro.z_count++].value = (data1 >> 8) & 0x0000FFFF;
-					break;
-
-					case 0x05: //axel
-						//OK
-						data->imu_axel[data->imu_axel_count].timestamp = message_timestamp;
-						data->imu_axel[data->imu_axel_count].value.x = ((data1 >> 16) & 255) * 256 + ((data1 >> 8) & 255);
-						data->imu_axel[data->imu_axel_count].value.y = ((data1) & 255) * 256 + ((data2 >> 24) & 255);
-						data->imu_axel[data->imu_axel_count++].value.z = ((data2 >> 16) & 255) * 256 + ((data2 >> 8) & 255);
+					case 0x05: // IMU AXEL
+						data->imu_accel[data->imu_accel_count].timestamp = message_timestamp;
+						data->imu_accel[data->imu_accel_count].value.x = (data1 >> 8) & 0x0000FFFF;
+						data->imu_accel[data->imu_accel_count].value.y = ((data1 & 0x000000FF) * 0xFF) + ((data2 >> 24) & 0x000000FF);
+						data->imu_accel[data->imu_accel_count].value.z = (data2 >> 8) & 0x0000FFFF;
+						data->imu_accel[data->imu_accel_count++].value.scale = (data2 >> 24) & 0x000000FF;
 					break;
 				
-					case 0x02: //steering wheel
+					case 0x02: // STEERING WHEEL ENCODER
 						data->steering_wheel_encoder[data->steering_wheel_encoder_count].timestamp = message_timestamp;
 						data->steering_wheel_encoder[data->steering_wheel_encoder_count++].value = ((data1 >> 16) & 255);
 					break;
@@ -117,24 +112,32 @@ int data_gather(data_t* data, int timing, int socket) {
 			case (0xD0): //GPS and FWE
 				switch (firstByte) {
 					case 0x01: //lat and speed
-						//OK
 						data->gps.latspd[data->gps.latspd_count].timestamp = message_timestamp;
-						data->gps.latspd[data->gps.latspd_count].value.latitude  = (((data1 >> 16) & 255)*256 + ((data1 >> 8) & 255)) * 100000 + ((data1 & 255)*256+((data2 >> 24) & 255));
-						data->gps.latspd[data->gps.latspd_count].value.speed = (((data2 >> 8) & 255) *256) + (data2 & 255);
-						data->gps.latspd[data->gps.latspd_count++].value.lat_o = data2 >> 16 & 255;
+						data->gps.latspd[data->gps.latspd_count].value.latitude_ih  = (data1 >> 8) & 0x0000FFFF;
+						data->gps.latspd[data->gps.latspd_count].value.latitude_il = ((data1 & 0x000000FF) * 0xFF) + ((data2 >> 24) & 0x000000FF);
+						data->gps.latspd[data->gps.latspd_count].value.latitude_o  = (data2 >> 16) & 0x000000FF;
+						data->gps.latspd[data->gps.latspd_count++].value.speed = data2 & 0x0000FFFF;
 					break;
 
 					case 0x02: //lon and altitude
-						//OK
 						data->gps.lonalt[data->gps.lonalt_count].timestamp = message_timestamp;
-						data->gps.lonalt[data->gps.lonalt_count].value.longitude  = (((data1 >> 16) & 255)*256 + ((data1 >> 8) & 255)) * 100000 + ((data1 & 255)*256+((data2 >> 24) & 255));
-						data->gps.lonalt[data->gps.lonalt_count].value.altitude = (((data2 >> 8) & 255) *256) + (data2 & 255);
-						data->gps.lonalt[data->gps.lonalt_count++].value.lon_o = data2 >> 16 & 255;
+						data->gps.lonalt[data->gps.lonalt_count].value.longitude_ih  = (data1 >> 8) & 0x0000FFFF;
+						data->gps.lonalt[data->gps.lonalt_count].value.longitude_il = ((data1 & 0x000000FF) * 0xFF) + ((data2 >> 24) & 0x000000FF);
+						data->gps.lonalt[data->gps.lonalt_count].value.longitude_o  = (data2 >> 16) & 0x000000FF;
+						data->gps.lonalt[data->gps.lonalt_count++].value.altitude = data2 & 0x0000FFFF;
 					break;
 
 					case 0x06: //front wheels
 						data->front_wheels_encoder[data->front_wheels_encoder_count].timestamp = message_timestamp;
 						data->front_wheels_encoder[data->front_wheels_encoder_count++].value = ((data1 >> 16) & 255) *256 + ((data1 >> 8) & 255);
+					break;
+
+					case 0x08: // DISTANCE
+						data->distance[data->distance_count].timestamp = message_timestamp;
+						data->distance[data->distance_count].value.meters = (data1 >> 8) & 0x0000FFFF;
+						data->distance[data->distance_count].value.rotations = ((data1 & 0x000000FF) * 0xFF) + ((data2 >> 24) & 0x000000FF);
+						data->distance[data->distance_count].value.angle = (data2 >> 16) & 0x000000F;
+						data->distance[data->distance_count++].value.clock_period = (data2 >> 8) & 0x000000F;
 					break;
 				}
 			break;
