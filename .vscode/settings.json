@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "can_custom_lib.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}
