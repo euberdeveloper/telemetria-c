@@ -1,9 +1,5 @@
 #include "structure_service.h" 
 
-/* HELPERS SIGNATURES */
-
-/* EXPORTED */
-
 data_t* structureCreate() {
 	data_t* data = (data_t*) malloc(sizeof(data_t));
 	data->steering_wheel.marker = 0;
@@ -751,5 +747,3 @@ gather_code gatherStructure(data_t *document)
 
 	return outcome;
 }
-
-/* HELPERS DEFINITIONS */
