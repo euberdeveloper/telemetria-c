@@ -11,7 +11,6 @@ static void updateCondition(const config_t* config) {
     condition.mongodb.host = strdup(config->mongodb.host);
     condition.mongodb.port = config->mongodb.port;
     condition.mongodb.db = strdup(config->mongodb.db);
-    condition.mongodb.collection = strdup(config->mongodb.collection);
 
     condition.can.can_interface = strdup(config->can_interface);
 

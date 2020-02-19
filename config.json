@@ -10,7 +10,6 @@
     "host": "localhost",
     "port": 27017,
     "db": "eagle_test",
-    "collection": "chimera"
   },
 
   "pilots": [

@@ -258,7 +258,6 @@ typedef struct {
 typedef struct {
 	int id;
 	long timestamp;
-	char* sessionName;
 	inverterRight_data *inverterRight;
 	int inverterRight_count;
 	inverterLeft_data *inverterLeft;

@@ -131,11 +131,7 @@ static void parseMongodbObject(const jsmntok_t *json_tokens, const char *json_st
         else if (strcmp(key, "db") == 0) {
             free(config->mongodb.db);
             config->mongodb.db = getStringValue(json_tokens, json_string, i);
-        } 
-        else if (strcmp(key, "collection") == 0) {
-            free(config->mongodb.collection);
-            config->mongodb.collection = getStringValue(json_tokens, json_string, i);
-        } 
+        }
         else {
             ++(*i);
             jsmntok_t token = json_tokens[*i];
@@ -210,7 +206,6 @@ config_t* newConfig() {
     config->mongodb.host = strdup("localhost");
     config->mongodb.port = 27017;
     config->mongodb.db = strdup("eagle_test");
-    config->mongodb.collection = strdup("chimera");
 
     config->can_interface = strdup("can0");
     config->sending_rate = 500;
@@ -264,7 +259,6 @@ void deleteConfig(config_t *config) {
 
     free(config->mongodb.host);
     free(config->mongodb.db);
-    free(config->mongodb.collection);
 
     free(config->can_interface);
     freeStringsArray(config->pilots, &config->pilots_count);
@@ -280,7 +274,6 @@ void printConfig(const config_t* config) {
     printf("config->mongodb.host:\t%s\n", config->mongodb.host);
     printf("config->mongodb.port:\t%d\n", config->mongodb.port);
     printf("config->mongodb.db:\t%s\n", config->mongodb.db);
-    printf("config->mongodb.collection:\t%s\n", config->mongodb.collection);
     printf("config->can_interface:\t%s\n", config->can_interface);
     printf("config->sending_rate:\t%d\n", config->sending_rate);
     printf("config->pilots: ");

@@ -52,7 +52,6 @@ void structureToBson(data_t *data, bson_t** bson_document) {
 	bson_t *children = (bson_t*)malloc(sizeof(bson_t) * 5);
 	BSON_APPEND_INT32(*bson_document, "id", data->id);
 	BSON_APPEND_INT64(*bson_document, "timestamp", data->timestamp);
-	BSON_APPEND_UTF8(*bson_document, "sessionName", data->sessionName);
 	BSON_APPEND_ARRAY_BEGIN(*bson_document, "inverterRight", &children[0]);
 	for (int i = 0; i < (data->inverterRight_count); i++)
 	{
@@ -402,7 +401,6 @@ gather_code gatherStructure(data_t *document)
     gather_code outcome = GATHER_KEEP;
 
 	document->id = condition.structure.id++;
-    document->sessionName = condition.mongodb.instance->session_name;
 	
 	double msec = 0, end = 0;
 	struct timespec tstart = {0, 0}, tend = {0, 0};

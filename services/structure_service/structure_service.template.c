@@ -20,7 +20,6 @@ gather_code gatherStructure(data_t *document)
     gather_code outcome = GATHER_KEEP;
 
 	document->id = condition.structure.id++;
-    document->sessionName = condition.mongodb.instance->session_name;
 	
 	double msec = 0, end = 0;
 	struct timespec tstart = {0, 0}, tend = {0, 0};
