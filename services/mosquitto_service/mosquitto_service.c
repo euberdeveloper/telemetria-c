@@ -12,7 +12,6 @@ mosquitto_code mosquittoSetup() {
 
   condition.mqtt.instance = mosquitto_new(MQTT_ID, false, NULL);
   if (!condition.mqtt.instance) {
-    printf("Error in creating mqtt instance\n");
     return MOSQUITTO_CREATION_ERROR;
   }
 
@@ -21,7 +20,6 @@ mosquitto_code mosquittoSetup() {
     return MOSQUITTO_OK;
   }
   else {
-    printf("Error in connecting to mqtt\n");
     return MOSQUITTO_CONNECTION_ERROR;
   }
 }
@@ -33,12 +31,16 @@ mosquitto_code mosquittoSend(const bson_t* message) {
     return MOSQUITTO_OK;
   }
   else {
-    printf("Error in sending data via mqtt");
+    logWarning("Error in sending data via mqtt");
     return MOSQUITTO_PUBLISH_ERROR;
   }
 }
 
 mosquitto_code mosquittoLog(const char* message) {
+  if (condition.mqtt.instance == NULL) {
+    return MOSQUITTO_OK;
+  }
+
   int size = strlen(message);
   int outcome = mosquitto_publish(condition.mqtt.instance, NULL, condition.mqtt.log_topic, size, message, 0, false);
   
@@ -46,7 +48,7 @@ mosquitto_code mosquittoLog(const char* message) {
     return MOSQUITTO_OK;
   }
   else {
-    printf("Error in logging data via mqtt");
+    logWarning("Error in logging data via mqtt");
     return MOSQUITTO_PUBLISH_ERROR;
   }
 }
@@ -90,7 +92,7 @@ mosquitto_code mosquittoLogSession() {
 
 mosquitto_code mosquittoLogInsertion(int size) {
   char* message;
-	asprintf(&message, "[INFO] Inserted document, size: %d B", size);
+	asprintf(&message, "[DEBUG] Inserted document, size: %d B", size);
 	
   mosquitto_code outcome = mosquittoLog(message);
   free(message);
@@ -101,4 +103,27 @@ mosquitto_code mosquittoLogQuit() {
   char* message = strdup("[INFO] Quitting telemetry");
   mosquittoLog(message);
   free(message);
+}
+
+char* mosquittoErrorMessage(mosquitto_code code) {
+    switch (code)
+    {
+        case MOSQUITTO_OK:
+            return strdup("Mosquitto ok");
+        
+        case MOSQUITTO_CREATION_ERROR:
+            return strdup("Error in creating mqtt instance");
+
+        case MOSQUITTO_CONNECTION_ERROR:
+            return strdup("Error in connecting to mqtt");
+
+        case MOSQUITTO_PUBLISH_ERROR:
+            return strdup("Error in publishing data to mqtt");
+
+        case MOSQUITTO_LOG_ERROR:
+            return strdup("Error in logging data to mqtt");
+        
+        default:
+            return strdup("Unknown mqtt error code");
+    }
 }

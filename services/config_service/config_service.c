@@ -29,7 +29,7 @@ config_code handleConfig() {
     config_code result;
 
     config_t* config = newConfig();
-    parseConfigFile(condition.config_path, config);
+    parseConfigFile(condition.config_path, &config);
     
     if (config != NULL) {
         updateCondition(config);
@@ -38,7 +38,6 @@ config_code handleConfig() {
         result = CONFIG_OK;
     }
     else {
-        printf("Error in parsing config file");
         result = CONFIG_ERROR;
     }
 

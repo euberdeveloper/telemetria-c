@@ -43,13 +43,16 @@ static mongodb_instance_t* getInstance(char* uri, char* db) {
 	bson_error_t error;
 	instance->uri = mongoc_uri_new_with_error(uri, &error);
 	if (!instance->uri) {
-		printf("Error in mongo: %s\n", error.message);
+		char* message;
+		asprintf(&message, "Error in mongodb: %s", error.message);
+		logWarning(message);
+		free(message);
 		return NULL;
 	}
 
 	instance->client = mongoc_client_new_from_uri(instance->uri);
 	if (!instance->client) {
-		printf("Error in mongo: cannot create client\n");
+		logWarning("Error in mongodb: cannot create client");
 		return NULL;
 	}
 
@@ -167,4 +170,18 @@ void mongoQuit() {
    	mongoc_client_destroy(condition.mongodb.instance->client);
    	mongoc_uri_destroy(condition.mongodb.instance->uri);
    	mongoc_cleanup();
+}
+
+char* mongoErrorMessage(mongo_code code) {
+    switch (code)
+    {
+        case MONGO_OK:
+            return strdup("MongoDB ok");
+        
+        case MONGO_SETUP_ERROR:
+            return strdup("Error in mongodb setup");
+
+        default:
+            return strdup("Unknown mongodb error code");
+    }
 }

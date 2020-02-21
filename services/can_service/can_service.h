@@ -27,5 +27,6 @@ typedef enum {
 can_code canSetup();
 int canRead(int *id, int *data_left, int *data_right);
 can_code canAnswerWheel(int enabled);
+char* canErrorMessage(can_code code);
 
 #endif

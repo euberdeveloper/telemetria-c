@@ -234,11 +234,11 @@ config_t* newConfig() {
     return config;
 }
 
-void parseConfigFile(const char* path, config_t *config) {
+void parseConfigFile(const char* path, config_t **config) {
     FILE *config_file = fopen(path, "r");
 
     if (config_file == NULL) {
-        config = NULL;
+        *config = NULL;
     }
     else {
         char *json_string;
@@ -247,9 +247,8 @@ void parseConfigFile(const char* path, config_t *config) {
         json_length = getJsonString(config_file, &json_string);
         fclose(config_file);
         tokens_length = getJsonTokens(json_string, json_length, &json_tokens);
-        parseJsonTokens(json_tokens, tokens_length, json_string, config);
+        parseJsonTokens(json_tokens, tokens_length, json_string, *config);
     }
-
 }
 
 void deleteConfig(config_t *config) {

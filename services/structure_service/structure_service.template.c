@@ -15,6 +15,10 @@ void structureDelete(data_t *data) {
 	//{{GENERATE_STRUCTURE_DEALLOCATOR_CODE}}
 }
 
+void resetStructureId() {
+    condition.structure.id = 0;
+}
+
 gather_code gatherStructure(data_t *document)
 {
     gather_code outcome = GATHER_KEEP;

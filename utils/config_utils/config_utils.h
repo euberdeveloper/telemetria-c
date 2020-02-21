@@ -52,7 +52,7 @@ config_t* newConfig();
  * @param path The path of the config file
  * @param config The reference to the config instance
 */
-void parseConfigFile(const char *path, config_t *config);
+void parseConfigFile(const char* path, config_t **config);
 
 /**
  * Deallocates the given config instance

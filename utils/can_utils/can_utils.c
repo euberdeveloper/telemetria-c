@@ -6,7 +6,6 @@ int canOpenSocket(const char* can_device, struct sockaddr_can* address) {
 
 	can_socket = socket(PF_CAN, SOCK_RAW, CAN_RAW);
 	if (can_socket < 0) {
-		printf("Error while opening can socket");
 		return -1;
 	}
 
@@ -17,7 +16,6 @@ int canOpenSocket(const char* can_device, struct sockaddr_can* address) {
 	(*address).can_ifindex = ifr.ifr_ifindex;
 
 	if (bind(can_socket, (struct sockaddr *) address, sizeof(*address)) < 0) {
-		printf("Error in socket bind\n");
 		return -2;
 	}
 

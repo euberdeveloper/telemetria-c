@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "../services/log_service/log_service.h"
 #include "../services/can_service/can_service.h"
 #include "../services/config_service/config_service.h"
 #include "../services/mongo_service/mongo_service.h"

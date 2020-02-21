@@ -295,5 +295,6 @@ data_t* structureCreate();
 void structureToBson(data_t *document, bson_t **bson_document);
 void structureDelete(data_t *document);
 gather_code gatherStructure(data_t* document);
+void resetStructureId();
 
 #endif

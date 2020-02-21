@@ -8,18 +8,15 @@ can_code canSetup() {
     int socket = canOpenSocket(can_interface, &addr);
     
     if (socket == -1) {
-        printf("Error in connecting to can socket\n");
         result = CAN_SERVICE_CONNECTION_ERROR;
     }
     else if (socket == -2) {
-        printf("Error in binding to can socket\n");
         result = CAN_SERVICE_BINDING_ERROR;
     }
     else {
         condition.can.socket = socket;
         result = CAN_SERVICE_OK;
     }
-
     return result;
 }
 
@@ -48,4 +45,21 @@ can_code canAnswerWheel(int enabled) {
     
 	free(data);
     return result;
+}
+
+char* canErrorMessage(can_code code) {
+    switch (code)
+    {
+        case CAN_SERVICE_OK:
+            return strdup("Can ok");
+        
+        case CAN_SERVICE_CONNECTION_ERROR:
+            return strdup("Error in connecting to can");
+
+        case CAN_SERVICE_BINDING_ERROR:
+            return strdup("Error in binding to can");
+        
+        default:
+            return strdup("Unknown can error code");
+    }
 }
