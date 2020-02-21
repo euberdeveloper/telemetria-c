@@ -1,28 +1,11 @@
 #include "structure_service.h" 
 
-static void resetGpsElement(data_t *document, int index) {
-    document->gps.new[index].timestamp = 0;
-    document->gps.new[index].value.latitude_GGA = 0.0;
-    document->gps.new[index].value.longitude_GGA = 0.0;
-    document->gps.new[index].value.altitude_GGA = 0.0;
-    document->gps.new[index].value.ns_indicator_GGA = "";
-    document->gps.new[index].value.ew_indicator_GGA = "";
-    document->gps.new[index].value.utc_time_GGA = "";
-    document->gps.new[index].value.latitude_GLL = 0.0;
-    document->gps.new[index].value.longitude_GLL= 0.0;
-    document->gps.new[index].value.ns_indicator_GLL = "";
-    document->gps.new[index].value.ew_indicator_GLL = "";
-    document->gps.new[index].value.utc_time_GLL = "";
-    document->gps.new[index].value.ground_speed_human_VTG = 0.0;
-    document->gps.new[index].value.ground_speed_knots_VTG = 0.0;
-    document->gps.new[index].value.latitude_RMC = 0.0;
-    document->gps.new[index].value.longitude_RMC = 0.0;
-    document->gps.new[index].value.ns_indicator_RMC = "";
-    document->gps.new[index].value.ew_indicator_RMC = "";
-    document->gps.new[index].value.utc_time_RMC = "";
-    document->gps.new[index].value.date_RMC = "";
-    document->gps.new[index].value.ground_speed_knots_RMC = 0.0;
-}
+/* INTERNAL FUNCTIONS SIGNATURES */
+
+static void resetGpsElement(data_t *document, int index);
+static long long int getCurrentTimestamp();
+
+/* EXPORTED FUNCTIONS */
 
 data_t* structureCreate() {
 	data_t* data = (data_t*) malloc(sizeof(data_t));
@@ -465,8 +448,6 @@ gather_code gatherStructure(data_t *document)
 	clock_gettime(CLOCK_MONOTONIC, &tstart);
 	end = ((double)tstart.tv_sec * 1000 + 1.0e-6 * tstart.tv_nsec);
 
-	document->timestamp = end;
-
 	int id, data_left, data_right;
 	int lat_done = 0, lon_done = 0;
     int gga_done = 0, gll_done = 0, vtg_done = 0, rmc_done = 0;
@@ -481,7 +462,6 @@ gather_code gatherStructure(data_t *document)
 
 		struct timespec tmessage = {0, 0};
 		clock_gettime(CLOCK_MONOTONIC, &tmessage);
-		size_t message_timestamp = ((double) tmessage.tv_sec * 1000 + 1.0e-6 * tmessage.tv_nsec);
 
 		int first_byte = ((data_left >> 24) & 255);
 
@@ -489,13 +469,13 @@ gather_code gatherStructure(data_t *document)
 		{
 
             case (INVERTER_RIGHT_ID):
-                document->inverterLeft[document->inverterLeft_count].timestamp = message_timestamp;
+                document->inverterLeft[document->inverterLeft_count].timestamp = getCurrentTimestamp();
                 document->inverterLeft[document->inverterLeft_count].value.data_left = data_left;
                 document->inverterLeft[document->inverterLeft_count++].value.data_right = data_right;
                 break;
 
             case (INVERTER_LEFT_ID):
-                document->inverterRight[document->inverterRight_count].timestamp = message_timestamp;
+                document->inverterRight[document->inverterRight_count].timestamp = getCurrentTimestamp();
                 document->inverterRight[document->inverterRight_count].value.data_left = data_left;
                 document->inverterRight[document->inverterRight_count++].value.data_right = data_right;
                 break;
@@ -504,33 +484,33 @@ gather_code gatherStructure(data_t *document)
                 switch (first_byte)
                 {
                 case VOLTAGE_FB:
-                    document->bms_hv.voltage[document->bms_hv.voltage_count].timestamp = message_timestamp;
+                    document->bms_hv.voltage[document->bms_hv.voltage_count].timestamp = getCurrentTimestamp();
                     document->bms_hv.voltage[document->bms_hv.voltage_count].value.total = (double)(data_left & 0x00FFFFFF) / 10000;
                     document->bms_hv.voltage[document->bms_hv.voltage_count].value.max = (double)((data_right >> 16) & 0x0000FFFF) / 10000;
                     document->bms_hv.voltage[document->bms_hv.voltage_count++].value.min = (double)(data_right & 0x0000FFFF) / 10000;
                     break;
 
                 case TEMPERATURE_FB:
-                    document->bms_hv.temperature[document->bms_hv.temperature_count].timestamp = message_timestamp;
+                    document->bms_hv.temperature[document->bms_hv.temperature_count].timestamp = getCurrentTimestamp();
                     document->bms_hv.temperature[document->bms_hv.temperature_count].value.average = ((data_left >> 8) & 0x0000FFFF) / 100;
                     document->bms_hv.temperature[document->bms_hv.temperature_count].value.max = (((data_left & 0x000000FF) * 256 + ((data_right >> 24) & 0x000000FF))) / 100;
                     document->bms_hv.temperature[document->bms_hv.temperature_count++].value.min = ((data_right >> 8) & 0x0000FFFF) / 100;
                     break;
 
                 case CURRENT_FB:
-                    document->bms_hv.current[document->bms_hv.current_count].timestamp = message_timestamp;
+                    document->bms_hv.current[document->bms_hv.current_count].timestamp = getCurrentTimestamp();
                     document->bms_hv.current[document->bms_hv.current_count].value.current = (double)((data_left >> 8) & 0x0000FFFF) / 10;
                     document->bms_hv.current[document->bms_hv.current_count++].value.pow = (double)((data_left & 0x000000FF) * 256 + ((data_right >> 24) & 0x000000FF));
                     break;
 
                 case ERRORS_FB:
-                    document->bms_hv.errors[document->bms_hv.errors_count].timestamp = message_timestamp;
+                    document->bms_hv.errors[document->bms_hv.errors_count].timestamp = getCurrentTimestamp();
                     document->bms_hv.errors[document->bms_hv.errors_count].value.fault_id = ((data_left >> 16) & 0x000000FF);
                     document->bms_hv.errors[document->bms_hv.errors_count++].value.fault_index = ((data_left >> 8) & 0x000000FF) / 10;
                     break;
 
                 case WARNINGS_FB:
-                    document->bms_hv.warnings[document->bms_hv.warnings_count].timestamp = message_timestamp;
+                    document->bms_hv.warnings[document->bms_hv.warnings_count].timestamp = getCurrentTimestamp();
                     document->bms_hv.warnings[document->bms_hv.warnings_count].value.fault_id = ((data_left >> 16) & 0x000000FF);
                     document->bms_hv.warnings[document->bms_hv.warnings_count++].value.fault_index = ((data_left >> 8) & 0x000000FF) / 10;
                     break;
@@ -540,14 +520,14 @@ gather_code gatherStructure(data_t *document)
             case (PEDALS_ID):
                 if (first_byte == THROTTLE_FB)
                 {
-                    document->throttle[document->throttle_count].timestamp = message_timestamp;
+                    document->throttle[document->throttle_count].timestamp = getCurrentTimestamp();
                     document->throttle[document->throttle_count].value = ((data_left >> 16) & 255);
 
                     document->throttle_count++;
                 }
                 else if (first_byte = BRAKE_FB)
                 {
-                    document->brake[document->brake_count].timestamp = message_timestamp;
+                    document->brake[document->brake_count].timestamp = getCurrentTimestamp();
                     document->brake[document->brake_count].value = ((data_left >> 16) & 255);
 
                     document->brake_count++;
@@ -558,7 +538,7 @@ gather_code gatherStructure(data_t *document)
                 switch (first_byte)
                 {
                 case IMU_GYRO_FB:
-                    document->imu_gyro[document->imu_gyro_count].timestamp = message_timestamp;
+                    document->imu_gyro[document->imu_gyro_count].timestamp = getCurrentTimestamp();
                     document->imu_gyro[document->imu_gyro_count].value.x = (double)((data_left >> 8) & 0x0000FFFF);
                     document->imu_gyro[document->imu_gyro_count].value.y = (double)((data_left & 0x000000FF) * 0xFF) + ((data_right >> 24) & 0x000000FF);
                     document->imu_gyro[document->imu_gyro_count].value.z = (double)((data_right >> 8) & 0x0000FFFF);
@@ -576,7 +556,7 @@ gather_code gatherStructure(data_t *document)
                     break;
 
                 case IMU_ACCEL_FB:
-                    document->imu_accel[document->imu_accel_count].timestamp = message_timestamp;
+                    document->imu_accel[document->imu_accel_count].timestamp = getCurrentTimestamp();
                     document->imu_accel[document->imu_accel_count].value.x = (double)((data_left >> 8) & 0x0000FFFF);
                     document->imu_accel[document->imu_accel_count].value.y = (double)((data_left & 0x000000FF) * 0xFF) + ((data_right >> 24) & 0x000000FF);
                     document->imu_accel[document->imu_accel_count].value.z = (double)((data_right >> 8) & 0x0000FFFF);
@@ -594,7 +574,7 @@ gather_code gatherStructure(data_t *document)
                     break;
 
                 case SWE_FB:
-                    document->steering_wheel.encoder[document->steering_wheel.encoder_count].timestamp = message_timestamp;
+                    document->steering_wheel.encoder[document->steering_wheel.encoder_count].timestamp = getCurrentTimestamp();
                     document->steering_wheel.encoder[document->steering_wheel.encoder_count++].value = ((data_left >> 16) & 255);
                     break;
                 }
@@ -608,7 +588,7 @@ gather_code gatherStructure(data_t *document)
                     {
                         document->gps.old.location_count++;
 
-                        document->gps.old.location[document->gps.old.location_count].timestamp = message_timestamp;
+                        document->gps.old.location[document->gps.old.location_count].timestamp = getCurrentTimestamp();
                         document->gps.old.location[document->gps.old.location_count].value.latitude_m = (double)(((((data_left >> 8) & 0x0000FFFF) << 8) * 10000) + (((data_left & 0x000000FF) * 0xFF) << 8) + ((data_right >> 24) & 0x000000FF)) / 10000.0;
                         document->gps.old.location[document->gps.old.location_count].value.latitude_o = (data_right >> 16) & 0x000000FF;
                         document->gps.old.location[document->gps.old.location_count].value.speed = data_right & 0x0000FFFF;
@@ -622,7 +602,7 @@ gather_code gatherStructure(data_t *document)
                     }
                     else if (lon_done)
                     {
-                        if (abs(document->gps.old.location[document->gps.old.location_count].timestamp - message_timestamp) < 25)
+                        if (abs(document->gps.old.location[document->gps.old.location_count].timestamp - getCurrentTimestamp()) < 25)
                         {
                             document->gps.old.location[document->gps.old.location_count].value.latitude_m = (double)(((((data_left >> 8) & 0x0000FFFF) << 8) * 10000) + (((data_left & 0x000000FF) * 0xFF) << 8) + ((data_right >> 24) & 0x000000FF)) / 10000.0;
                             document->gps.old.location[document->gps.old.location_count].value.latitude_o = (data_right >> 16) & 0x000000FF;
@@ -637,7 +617,7 @@ gather_code gatherStructure(data_t *document)
                         {
                             document->gps.old.location_count++;
 
-                            document->gps.old.location[document->gps.old.location_count].timestamp = message_timestamp;
+                            document->gps.old.location[document->gps.old.location_count].timestamp = getCurrentTimestamp();
                             document->gps.old.location[document->gps.old.location_count].value.latitude_m = (double)(((((data_left >> 8) & 0x0000FFFF) << 8) * 10000) + (((data_left & 0x000000FF) * 0xFF) << 8) + ((data_right >> 24) & 0x000000FF)) / 10000.0;
                             document->gps.old.location[document->gps.old.location_count].value.latitude_o = (data_right >> 16) & 0x000000FF;
                             document->gps.old.location[document->gps.old.location_count].value.speed = data_right & 0x0000FFFF;
@@ -651,7 +631,7 @@ gather_code gatherStructure(data_t *document)
                         }
                     }
                     else {
-                        document->gps.old.location[document->gps.old.location_count].timestamp = message_timestamp;
+                        document->gps.old.location[document->gps.old.location_count].timestamp = getCurrentTimestamp();
                         document->gps.old.location[document->gps.old.location_count].value.latitude_m = (double)(((((data_left >> 8) & 0x0000FFFF) << 8) * 10000) + (((data_left & 0x000000FF) * 0xFF) << 8) + ((data_right >> 24) & 0x000000FF)) / 10000.0;
                         document->gps.old.location[document->gps.old.location_count].value.latitude_o = (data_right >> 16) & 0x000000FF;
                         document->gps.old.location[document->gps.old.location_count].value.speed = data_right & 0x0000FFFF;
@@ -670,7 +650,7 @@ gather_code gatherStructure(data_t *document)
                     {
                         document->gps.old.location_count++;
 
-                        document->gps.old.location[document->gps.old.location_count].timestamp = message_timestamp;
+                        document->gps.old.location[document->gps.old.location_count].timestamp = getCurrentTimestamp();
                         document->gps.old.location[document->gps.old.location_count].value.longitude_m = (double)(((((data_left >> 8) & 0x0000FFFF) << 8) * 10000) + (((data_left & 0x000000FF) * 0xFF) << 8) + ((data_right >> 24) & 0x000000FF)) / 10000.0;
                         document->gps.old.location[document->gps.old.location_count].value.longitude_o = (data_right >> 16) & 0x000000FF;
                         document->gps.old.location[document->gps.old.location_count].value.altitude = data_right & 0x0000FFFF;
@@ -684,7 +664,7 @@ gather_code gatherStructure(data_t *document)
                     }
                     else if (lat_done)
                     {
-                        if (abs(document->gps.old.location[document->gps.old.location_count].timestamp - message_timestamp) < 25)
+                        if (abs(document->gps.old.location[document->gps.old.location_count].timestamp - getCurrentTimestamp()) < 25)
                         {
                             document->gps.old.location[document->gps.old.location_count].value.longitude_m = (double)(((((data_left >> 8) & 0x0000FFFF) << 8) * 10000) + (((data_left & 0x000000FF) * 0xFF) << 8) + ((data_right >> 24) & 0x000000FF)) / 10000.0;
                             document->gps.old.location[document->gps.old.location_count].value.longitude_o = (data_right >> 16) & 0x000000FF;
@@ -699,7 +679,7 @@ gather_code gatherStructure(data_t *document)
                         {
                             document->gps.old.location_count++;
 
-                            document->gps.old.location[document->gps.old.location_count].timestamp = message_timestamp;
+                            document->gps.old.location[document->gps.old.location_count].timestamp = getCurrentTimestamp();
                             document->gps.old.location[document->gps.old.location_count].value.longitude_m = (double)(((((data_left >> 8) & 0x0000FFFF) << 8) * 10000) + (((data_left & 0x000000FF) * 0xFF) << 8) + ((data_right >> 24) & 0x000000FF)) / 10000.0;
                             document->gps.old.location[document->gps.old.location_count].value.longitude_o = (data_right >> 16) & 0x000000FF;
                             document->gps.old.location[document->gps.old.location_count].value.altitude = data_right & 0x0000FFFF;
@@ -713,7 +693,7 @@ gather_code gatherStructure(data_t *document)
                         }
                     }
                     else {
-                        document->gps.old.location[document->gps.old.location_count].timestamp = message_timestamp;
+                        document->gps.old.location[document->gps.old.location_count].timestamp = getCurrentTimestamp();
                         document->gps.old.location[document->gps.old.location_count].value.longitude_m = (double)(((((data_left >> 8) & 0x0000FFFF) << 8) * 10000) + (((data_left & 0x000000FF) * 0xFF) << 8) + ((data_right >> 24) & 0x000000FF)) / 10000.0;
                         document->gps.old.location[document->gps.old.location_count].value.longitude_o = (data_right >> 16) & 0x000000FF;
                         document->gps.old.location[document->gps.old.location_count].value.altitude = data_right & 0x0000FFFF;
@@ -728,19 +708,19 @@ gather_code gatherStructure(data_t *document)
                     break;
 
                 case TIME_FB:
-                    document->gps.old.time[document->gps.old.time_count].timestamp = message_timestamp;
+                    document->gps.old.time[document->gps.old.time_count].timestamp = getCurrentTimestamp();
                     document->gps.old.time[document->gps.old.time_count].value.hours = ((((data_left >> 16) & 0x000000FF) - 48) * 10) + (((data_left >> 8) & 0x000000FF) - 48);
                     document->gps.old.time[document->gps.old.time_count].value.minutes = (((data_left & 0x000000FF) - 48) * 10) + (((data_right >> 24) & 0x000000FF) - 48);
                     document->gps.old.time[document->gps.old.time_count++].value.seconds = ((((data_right >> 16) & 0x000000FF) - 48) * 10) + (((data_right >> 8) & 0x000000FF) - 48);
                     break;
 
                 case TTM_FB:
-                    document->gps.old.true_track_mode[document->gps.old.true_track_mode_count].timestamp = message_timestamp;
+                    document->gps.old.true_track_mode[document->gps.old.true_track_mode_count].timestamp = getCurrentTimestamp();
                     document->gps.old.true_track_mode[document->gps.old.true_track_mode_count++].value = (data_left >> 8) & 0x0000FFFF;
                     break;
 
                 case FRONT_WHEELS_FB:
-                    document->front_wheels_encoder[document->front_wheels_encoder_count].timestamp = message_timestamp;
+                    document->front_wheels_encoder[document->front_wheels_encoder_count].timestamp = getCurrentTimestamp();
                     document->front_wheels_encoder[document->front_wheels_encoder_count].value.speed = ((data_left >> 8) & 0x0000FFFF) * ((data_left & 0x000000FF) == 0 ? 1 : -1);
                     document->front_wheels_encoder[document->front_wheels_encoder_count].value.speedms = (((data_right >> 16) & 0x0000FFFF) * ((data_left & 0x000000FF) == 0 ? 1 : -1)) / 100;
 
@@ -748,7 +728,7 @@ gather_code gatherStructure(data_t *document)
                     break;
 
                 case DISTANCE_FB:
-                    document->distance[document->distance_count].timestamp = message_timestamp;
+                    document->distance[document->distance_count].timestamp = getCurrentTimestamp();
                     document->distance[document->distance_count].value.meters = (data_left >> 8) & 0x0000FFFF;
                     document->distance[document->distance_count].value.rotations = ((data_left & 0x000000FF) * 0xFF) + ((data_right >> 24) & 0x000000FF);
                     document->distance[document->distance_count].value.angle = (data_right >> 16) & 0x000000F;
@@ -758,7 +738,7 @@ gather_code gatherStructure(data_t *document)
                 break;
 
             case (BMS_LV_ID):
-                document->bms_lv.values[document->bms_lv.values_count].timestamp = message_timestamp;
+                document->bms_lv.values[document->bms_lv.values_count].timestamp = getCurrentTimestamp();
                 document->bms_lv.values[document->bms_lv.values_count].value.voltage = (double)((data_left >> 24) & 255) / 10.0;
                 document->bms_lv.values[document->bms_lv.values_count++].value.temperature = (double)((data_left >> 8) & 255) / 5.0;
                 break;
@@ -766,7 +746,7 @@ gather_code gatherStructure(data_t *document)
             case (WHEEL_ID):
                 if (first_byte == GEARS_FB)
                 {
-                    document->steering_wheel.gears[document->steering_wheel.gears_count].timestamp = message_timestamp;
+                    document->steering_wheel.gears[document->steering_wheel.gears_count].timestamp = getCurrentTimestamp();
                     document->steering_wheel.gears[document->steering_wheel.gears_count].value.control = (data_left >> 16) & 0xFF;
                     document->steering_wheel.gears[document->steering_wheel.gears_count].value.cooling = (data_left >> 8) & 0xFF;
                     document->steering_wheel.gears[document->steering_wheel.gears_count].value.map = (data_left)&0xFF;
@@ -905,9 +885,47 @@ gather_code gatherStructure(data_t *document)
             }
         }
 
+        document->timestamp = getCurrentTimestamp();
+
 		clock_gettime(CLOCK_MONOTONIC, &tend);
 		msec = (((double)tend.tv_sec * 1000 + 1.0e-6 * tend.tv_nsec) - end);
 	} while (msec < condition.structure.sending_rate);
 
 	return outcome;
+}
+
+/* INTERNAL FUNCTIONS DEFINITIONS */
+
+static void resetGpsElement(data_t *document, int index) {
+    document->gps.new[index].timestamp = getCurrentTimestamp();
+    document->gps.new[index].value.latitude_GGA = 0.0;
+    document->gps.new[index].value.longitude_GGA = 0.0;
+    document->gps.new[index].value.altitude_GGA = 0.0;
+    document->gps.new[index].value.ns_indicator_GGA = "";
+    document->gps.new[index].value.ew_indicator_GGA = "";
+    document->gps.new[index].value.utc_time_GGA = "";
+    document->gps.new[index].value.latitude_GLL = 0.0;
+    document->gps.new[index].value.longitude_GLL= 0.0;
+    document->gps.new[index].value.ns_indicator_GLL = "";
+    document->gps.new[index].value.ew_indicator_GLL = "";
+    document->gps.new[index].value.utc_time_GLL = "";
+    document->gps.new[index].value.ground_speed_human_VTG = 0.0;
+    document->gps.new[index].value.ground_speed_knots_VTG = 0.0;
+    document->gps.new[index].value.latitude_RMC = 0.0;
+    document->gps.new[index].value.longitude_RMC = 0.0;
+    document->gps.new[index].value.ns_indicator_RMC = "";
+    document->gps.new[index].value.ew_indicator_RMC = "";
+    document->gps.new[index].value.utc_time_RMC = "";
+    document->gps.new[index].value.date_RMC = "";
+    document->gps.new[index].value.ground_speed_knots_RMC = 0.0;
+}
+
+static long long int getCurrentTimestamp() {
+	struct timeb timer_msec;
+	if(!ftime(&timer_msec)) {
+		return ((long long int) timer_msec.time) * 1000ll + ((long long int) timer_msec.millitm);
+	}
+	else {
+		return -1;
+	}
 }
