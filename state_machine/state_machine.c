@@ -44,8 +44,11 @@ result_codes init_state() {
         return ERROR;
     }
 
-    condition.gps_port = openGPSPort("/dev/ttyACM0");
-    printf("GPS port is %d\n", condition.gps_port);
+    if (condition.gps_plugged) {
+        infoGpsPlugged();
+        condition.gps_port = openGPSPort("/dev/ttyACM0");
+        debugGpsPort();
+    }
     
     successStartedUp();
     mosquittoLogStartup();

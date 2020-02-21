@@ -7,6 +7,13 @@ void debugConfigPath() {
     free(message);
 }
 
+void debugGpsPort() {
+    char *message;
+    asprintf(&message, "Gps port is %d", condition.gps_port);
+    logDebug(message);
+    free(message);
+}
+
 void infoTransition(int from, int to, char** labels) {  
   if (from != to) {
     char* from_label = strdup(labels[from]);
@@ -22,6 +29,10 @@ void infoTransition(int from, int to, char** labels) {
 
 void infoStartingUp() {
     logInfo("Starting telemetry up");
+}
+
+void infoGpsPlugged() {
+    logInfo("Gps is plugged to telemetry");
 }
 
 void infoNewSession() {

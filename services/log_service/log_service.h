@@ -21,9 +21,11 @@ extern condition_t condition;
 /* FUNCTIONS */
 
 void debugConfigPath();
+void debugGpsPort();
 
 void infoTransition(int from, int to, char** labels);
 void infoStartingUp();
+void infoGpsPlugged();
 void infoNewSession();
 void infoQuitting();
 

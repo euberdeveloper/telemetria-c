@@ -379,97 +379,99 @@ gather_code gatherStructure(data_t *document)
             }
 
         // Read GPS
-        gps_struct* gps_data = readGPS();
-        if (gps_data != NULL) {
-            if (gps_data->gga && gps_data->gga->status) {
-                if (gga_done) {
-                    ++(document->gps.new_count);
-                    resetGpsElement(document, document->gps.new_count);
-                    gll_done = 0;
-                    vtg_done = 0;
-                    rmc_done = 0;
-                    document->gps.new[document->gps.new_count].value.latitude_GGA = gps_data->gga->latitude;
-                    document->gps.new[document->gps.new_count].value.longitude_GGA = gps_data->gga->longitude;
-                    document->gps.new[document->gps.new_count].value.altitude_GGA = gps_data->gga->altitude;
-                    document->gps.new[document->gps.new_count].value.ns_indicator_GGA = gps_data->gga->ns_indicator;
-                    document->gps.new[document->gps.new_count].value.ew_indicator_GGA = gps_data->gga->ew_indicator;
-                    document->gps.new[document->gps.new_count].value.utc_time_GGA = gps_data->gga->utc_time;
+        if (condition.gps_plugged) {
+            gps_struct* gps_data = readGPS();
+            if (gps_data != NULL) {
+                if (gps_data->gga && gps_data->gga->status) {
+                    if (gga_done) {
+                        ++(document->gps.new_count);
+                        resetGpsElement(document, document->gps.new_count);
+                        gll_done = 0;
+                        vtg_done = 0;
+                        rmc_done = 0;
+                        document->gps.new[document->gps.new_count].value.latitude_GGA = gps_data->gga->latitude;
+                        document->gps.new[document->gps.new_count].value.longitude_GGA = gps_data->gga->longitude;
+                        document->gps.new[document->gps.new_count].value.altitude_GGA = gps_data->gga->altitude;
+                        document->gps.new[document->gps.new_count].value.ns_indicator_GGA = gps_data->gga->ns_indicator;
+                        document->gps.new[document->gps.new_count].value.ew_indicator_GGA = gps_data->gga->ew_indicator;
+                        document->gps.new[document->gps.new_count].value.utc_time_GGA = gps_data->gga->utc_time;
+                    }
+                    else {
+                        gga_done = 1;
+                        document->gps.new[document->gps.new_count].value.latitude_GGA = gps_data->gga->latitude;
+                        document->gps.new[document->gps.new_count].value.longitude_GGA = gps_data->gga->longitude;
+                        document->gps.new[document->gps.new_count].value.altitude_GGA = gps_data->gga->altitude;
+                        document->gps.new[document->gps.new_count].value.ns_indicator_GGA = gps_data->gga->ns_indicator;
+                        document->gps.new[document->gps.new_count].value.ew_indicator_GGA = gps_data->gga->ew_indicator;
+                        document->gps.new[document->gps.new_count].value.utc_time_GGA = gps_data->gga->utc_time;
+                    }
                 }
-                else {
-                    gga_done = 1;
-                    document->gps.new[document->gps.new_count].value.latitude_GGA = gps_data->gga->latitude;
-                    document->gps.new[document->gps.new_count].value.longitude_GGA = gps_data->gga->longitude;
-                    document->gps.new[document->gps.new_count].value.altitude_GGA = gps_data->gga->altitude;
-                    document->gps.new[document->gps.new_count].value.ns_indicator_GGA = gps_data->gga->ns_indicator;
-                    document->gps.new[document->gps.new_count].value.ew_indicator_GGA = gps_data->gga->ew_indicator;
-                    document->gps.new[document->gps.new_count].value.utc_time_GGA = gps_data->gga->utc_time;
-                }
-            }
 
-            if (gps_data->gll && gps_data->gll->status) {
-                if (gll_done) {
-                    ++(document->gps.new_count);
-                    resetGpsElement(document, document->gps.new_count);
-                    gga_done = 0;
-                    vtg_done = 0;
-                    rmc_done = 0;
-                    document->gps.new[document->gps.new_count].value.latitude_GLL = gps_data->gll->latitude;
-                    document->gps.new[document->gps.new_count].value.longitude_GLL = gps_data->gll->longitude;
-                    document->gps.new[document->gps.new_count].value.ns_indicator_GLL = gps_data->gll->ns_indicator;
-                    document->gps.new[document->gps.new_count].value.ew_indicator_GLL = gps_data->gll->ew_indicator;
-                    document->gps.new[document->gps.new_count].value.utc_time_GLL = gps_data->gll->utc_time;
+                if (gps_data->gll && gps_data->gll->status) {
+                    if (gll_done) {
+                        ++(document->gps.new_count);
+                        resetGpsElement(document, document->gps.new_count);
+                        gga_done = 0;
+                        vtg_done = 0;
+                        rmc_done = 0;
+                        document->gps.new[document->gps.new_count].value.latitude_GLL = gps_data->gll->latitude;
+                        document->gps.new[document->gps.new_count].value.longitude_GLL = gps_data->gll->longitude;
+                        document->gps.new[document->gps.new_count].value.ns_indicator_GLL = gps_data->gll->ns_indicator;
+                        document->gps.new[document->gps.new_count].value.ew_indicator_GLL = gps_data->gll->ew_indicator;
+                        document->gps.new[document->gps.new_count].value.utc_time_GLL = gps_data->gll->utc_time;
+                    }
+                    else {
+                        gll_done = 1;
+                        document->gps.new[document->gps.new_count].value.latitude_GLL = gps_data->gll->latitude;
+                        document->gps.new[document->gps.new_count].value.longitude_GLL = gps_data->gll->longitude;
+                        document->gps.new[document->gps.new_count].value.ns_indicator_GLL = gps_data->gll->ns_indicator;
+                        document->gps.new[document->gps.new_count].value.ew_indicator_GLL = gps_data->gll->ew_indicator;
+                        document->gps.new[document->gps.new_count].value.utc_time_GLL = gps_data->gll->utc_time;
+                    }
                 }
-                else {
-                    gll_done = 1;
-                    document->gps.new[document->gps.new_count].value.latitude_GLL = gps_data->gll->latitude;
-                    document->gps.new[document->gps.new_count].value.longitude_GLL = gps_data->gll->longitude;
-                    document->gps.new[document->gps.new_count].value.ns_indicator_GLL = gps_data->gll->ns_indicator;
-                    document->gps.new[document->gps.new_count].value.ew_indicator_GLL = gps_data->gll->ew_indicator;
-                    document->gps.new[document->gps.new_count].value.utc_time_GLL = gps_data->gll->utc_time;
-                }
-            }
 
-            if (gps_data->vtg) {
-                if (vtg_done) {
-                    ++(document->gps.new_count);
-                    resetGpsElement(document, document->gps.new_count);
-                    gga_done = 0;
-                    gll_done = 0;
-                    rmc_done = 0;
-                    document->gps.new[document->gps.new_count].value.ground_speed_knots_VTG = gps_data->vtg->ground_speed_knots;
-                    document->gps.new[document->gps.new_count].value.ground_speed_human_VTG = gps_data->vtg->ground_speed_human;
+                if (gps_data->vtg) {
+                    if (vtg_done) {
+                        ++(document->gps.new_count);
+                        resetGpsElement(document, document->gps.new_count);
+                        gga_done = 0;
+                        gll_done = 0;
+                        rmc_done = 0;
+                        document->gps.new[document->gps.new_count].value.ground_speed_knots_VTG = gps_data->vtg->ground_speed_knots;
+                        document->gps.new[document->gps.new_count].value.ground_speed_human_VTG = gps_data->vtg->ground_speed_human;
+                    }
+                    else {
+                        vtg_done = 1;
+                        document->gps.new[document->gps.new_count].value.ground_speed_knots_VTG = gps_data->vtg->ground_speed_knots;
+                        document->gps.new[document->gps.new_count].value.ground_speed_human_VTG = gps_data->vtg->ground_speed_human;
+                    }
                 }
-                else {
-                    vtg_done = 1;
-                    document->gps.new[document->gps.new_count].value.ground_speed_knots_VTG = gps_data->vtg->ground_speed_knots;
-                    document->gps.new[document->gps.new_count].value.ground_speed_human_VTG = gps_data->vtg->ground_speed_human;
-                }
-            }
 
-            if (gps_data->rmc && gps_data->rmc->status) {
-                if (rmc_done) {
-                    ++(document->gps.new_count);
-                    resetGpsElement(document, document->gps.new_count);
-                    gll_done = 0;
-                    vtg_done = 0;
-                    gga_done = 0;
-                    document->gps.new[document->gps.new_count].value.latitude_RMC = gps_data->rmc->latitude;
-                    document->gps.new[document->gps.new_count].value.longitude_RMC = gps_data->rmc->longitude;
-                    document->gps.new[document->gps.new_count].value.ground_speed_knots_RMC = gps_data->rmc->ground_speed_knots;
-                    document->gps.new[document->gps.new_count].value.ns_indicator_RMC = gps_data->rmc->ns_indicator;
-                    document->gps.new[document->gps.new_count].value.ew_indicator_RMC = gps_data->rmc->ew_indicator;
-                    document->gps.new[document->gps.new_count].value.utc_time_RMC = gps_data->rmc->utc_time;
-                    document->gps.new[document->gps.new_count].value.date_RMC = gps_data->rmc->date;
-                }
-                else {
-                    rmc_done = 1;
-                    document->gps.new[document->gps.new_count].value.latitude_RMC = gps_data->rmc->latitude;
-                    document->gps.new[document->gps.new_count].value.longitude_RMC = gps_data->rmc->longitude;
-                    document->gps.new[document->gps.new_count].value.ground_speed_knots_RMC = gps_data->rmc->ground_speed_knots;
-                    document->gps.new[document->gps.new_count].value.ns_indicator_RMC = gps_data->rmc->ns_indicator;
-                    document->gps.new[document->gps.new_count].value.ew_indicator_RMC = gps_data->rmc->ew_indicator;
-                    document->gps.new[document->gps.new_count].value.utc_time_RMC = gps_data->rmc->utc_time;
-                    document->gps.new[document->gps.new_count].value.date_RMC = gps_data->rmc->date;
+                if (gps_data->rmc && gps_data->rmc->status) {
+                    if (rmc_done) {
+                        ++(document->gps.new_count);
+                        resetGpsElement(document, document->gps.new_count);
+                        gll_done = 0;
+                        vtg_done = 0;
+                        gga_done = 0;
+                        document->gps.new[document->gps.new_count].value.latitude_RMC = gps_data->rmc->latitude;
+                        document->gps.new[document->gps.new_count].value.longitude_RMC = gps_data->rmc->longitude;
+                        document->gps.new[document->gps.new_count].value.ground_speed_knots_RMC = gps_data->rmc->ground_speed_knots;
+                        document->gps.new[document->gps.new_count].value.ns_indicator_RMC = gps_data->rmc->ns_indicator;
+                        document->gps.new[document->gps.new_count].value.ew_indicator_RMC = gps_data->rmc->ew_indicator;
+                        document->gps.new[document->gps.new_count].value.utc_time_RMC = gps_data->rmc->utc_time;
+                        document->gps.new[document->gps.new_count].value.date_RMC = gps_data->rmc->date;
+                    }
+                    else {
+                        rmc_done = 1;
+                        document->gps.new[document->gps.new_count].value.latitude_RMC = gps_data->rmc->latitude;
+                        document->gps.new[document->gps.new_count].value.longitude_RMC = gps_data->rmc->longitude;
+                        document->gps.new[document->gps.new_count].value.ground_speed_knots_RMC = gps_data->rmc->ground_speed_knots;
+                        document->gps.new[document->gps.new_count].value.ns_indicator_RMC = gps_data->rmc->ns_indicator;
+                        document->gps.new[document->gps.new_count].value.ew_indicator_RMC = gps_data->rmc->ew_indicator;
+                        document->gps.new[document->gps.new_count].value.utc_time_RMC = gps_data->rmc->utc_time;
+                        document->gps.new[document->gps.new_count].value.date_RMC = gps_data->rmc->date;
+                    }
                 }
             }
         }
