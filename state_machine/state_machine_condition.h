@@ -60,6 +60,7 @@ typedef struct {
     session_condition_t session;
     structure_condition_t structure;
     char* config_path;
+    int verbose;
 } condition_t;
 
 #endif

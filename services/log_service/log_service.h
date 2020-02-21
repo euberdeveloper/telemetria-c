@@ -34,4 +34,6 @@ void successQuitting();
 void errorParsingConfig();
 void errorGeneric(char* message);
 
+void debugGeneric(char* message);
+
 #endif

@@ -61,3 +61,9 @@ void errorGeneric(char* message) {
     logError(message);
     free(message);
 }
+
+void debugGeneric(char* message) {
+    if (condition.verbose) {
+        logDebug(message);
+    }
+}

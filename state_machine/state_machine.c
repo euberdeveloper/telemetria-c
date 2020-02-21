@@ -51,67 +51,84 @@ result_codes init_state() {
 }
 
 result_codes idle_state() {
-    logDebug("Resetting structure id");
+    debugGeneric("Resetting structure id");
     resetStructureId();
-    logDebug("Creating empty structure");
+
+    debugGeneric("Creating empty structure");
     data_t *document = structureCreate();
-    logDebug("Gathering data from can");
+
+    debugGeneric("Gathering data from can");
     gather_code gather_outcome = gatherStructure(document);
-    logDebug("Transforming document to bson");
+
+    debugGeneric("Transforming document to bson");
     bson_t *bson_document;
     structureToBson(document, &bson_document);
-    logDebug("Sending to mqtt");
+
+    debugGeneric("Sending to mqtt");
     mosquittoSend(bson_document);
-    logDebug("Deallocating structure");
+
+    debugGeneric("Deallocating structure");
     structureDelete(document);
-    logDebug("Deallocating bson message");
+
+    debugGeneric("Deallocating bson message");
     bson_destroy(bson_document);
 
     switch (gather_outcome) {
         case GATHER_KEEP:
         case GATHER_IDLE:
             return REPEAT;
+
         case GATHER_ENABLE:
-            logDebug("Starting new session");
+            debugGeneric("Starting new session");
             mongoStartSession();
             infoNewSession();
             mosquittoLogSession();
-            logDebug("Answering to the wheel");
+
+            debugGeneric("Answering to the wheel");
             canAnswerWheel(1);
             return TOGGLE;
+
         case GATHER_ERROR:
             return ERROR;
     }
 }
 
 result_codes enabled_state() {
-    logDebug("Creating empty structure");
+    debugGeneric("Creating empty structure");
     data_t *document = structureCreate();
-    logDebug("Gathering data from can");
+
+    debugGeneric("Gathering data from can");
     gather_code gather_outcome = gatherStructure(document);
-    logDebug("Transforming document to bson");
+
+    debugGeneric("Transforming document to bson");
     bson_t *bson_document;
     structureToBson(document, &bson_document);
-    logDebug("Sending to mqtt");
+
+    debugGeneric("Sending to mqtt");
     mosquittoSend(bson_document);
-    logDebug("Inserting to mongo");
+
+    debugGeneric("Inserting to mongo");
     mongoInsert(bson_document);
     size_t size; bson_as_relaxed_extended_json(bson_document, &size);
     successInsertion(size);
     mosquittoLogInsertion(size);
-    logDebug("Deallocating structure");
+
+    debugGeneric("Deallocating structure");
     structureDelete(document);
-    logDebug("Deallocating bson message");
+
+    debugGeneric("Deallocating bson message");
     bson_destroy(bson_document);
 
     switch (gather_outcome) {
         case GATHER_IDLE:
-            logDebug("Answering to the wheel");
+            debugGeneric("Answering to the wheel");
             canAnswerWheel(0);
             return TOGGLE;
+
         case GATHER_KEEP:
         case GATHER_ENABLE:
             return REPEAT;
+            
         case GATHER_ERROR:
             return ERROR;
     }

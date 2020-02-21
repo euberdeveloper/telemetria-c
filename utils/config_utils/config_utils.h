@@ -27,8 +27,11 @@ typedef struct {
 typedef struct {
     mqtt_config_t mqtt;
     mongo_config_t mongodb;
+
     char* can_interface;
     int sending_rate;
+    int verbose;
+    
     char** pilots;
     int pilots_count;
     char** races;
