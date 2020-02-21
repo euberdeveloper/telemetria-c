@@ -10,6 +10,7 @@ gcc main.c -o sender.out \
     ./utils/config_utils/jsmn/jsmn.c \
     ./utils/config_utils/config_utils.c \
     ./services/config_service/config_service.c \
+    ./services/gps_service/gps_service.c \
     ./services/mongo_service/mongo_service.c \
     ./services/log_service/log_service.c \
     ./services/can_service/can_service.c \

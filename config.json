@@ -37,5 +37,6 @@
 
   "can_interface": "can0",
   "sending_rate": 500,
+  "gps_plugged": 1,
   "verbose": 0
 }

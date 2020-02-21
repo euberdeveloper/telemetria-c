@@ -159,6 +159,9 @@ static void parseJsonTokens(const jsmntok_t *json_tokens, int tokens_length, con
         else if (strcmp(key, "sending_rate") == 0) {
             config->sending_rate = getIntValue(json_tokens, json_string, &i);
         } 
+        else if (strcmp(key, "gps_plugged") == 0) {
+            config->gps_plugged = getIntValue(json_tokens, json_string, &i);
+        } 
         else if (strcmp(key, "verbose") == 0) {
             config->verbose = getIntValue(json_tokens, json_string, &i);
         } 
@@ -212,6 +215,7 @@ config_t* newConfig() {
 
     config->can_interface = strdup("can0");
     config->sending_rate = 500;
+    config->gps_plugged = 0;
     config->verbose = 1;
 
     config->pilots_count = 3;
@@ -279,6 +283,7 @@ void printConfig(const config_t* config) {
     printf("config->mongodb.db:\t%s\n", config->mongodb.db);
     printf("config->can_interface:\t%s\n", config->can_interface);
     printf("config->sending_rate:\t%d\n", config->sending_rate);
+    printf("config->gps_plugged:\t%d\n", config->gps_plugged);
     printf("config->verbose:\t%d\n", config->verbose);
     printf("config->pilots: ");
     printStringsArray(config->pilots, config->pilots_count);

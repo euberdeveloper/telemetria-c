@@ -21,6 +21,8 @@ data_t* structureCreate() {
 	data->bms_lv.values_count = 0;
 	data->bms_lv.errors = (bms_lv_errors_data*)malloc(sizeof(bms_lv_errors_data) * 500);
 	data->bms_lv.errors_count = 0;
+	data->gps.new = (gps_new_data*)malloc(sizeof(gps_new_data) * 500);
+	data->gps.new_count = 0;
 	data->gps.old.location = (gps_old_location_data*)malloc(sizeof(gps_old_location_data) * 500);
 	data->gps.old.location_count = 0;
 	data->gps.old.time = (gps_old_time_data*)malloc(sizeof(gps_old_time_data) * 500);
@@ -192,12 +194,37 @@ void structureToBson(data_t *data, bson_t** bson_document) {
 	bson_append_document_end(*bson_document, &children[0]);
 	bson_destroy(&children[0]);
 	BSON_APPEND_DOCUMENT_BEGIN(*bson_document, "gps", &children[0]);
-	BSON_APPEND_INT64(&children[0], "timestamp", data->gps.timestamp);
-	BSON_APPEND_DOUBLE(&children[0], "latitude", data->gps.latitude);
-	BSON_APPEND_DOUBLE(&children[0], "longitude", data->gps.longitude);
-	BSON_APPEND_DOUBLE(&children[0], "altitude", data->gps.altitude);
-	BSON_APPEND_INT32(&children[0], "ns_indicator", data->gps.ns_indicator);
-	BSON_APPEND_INT32(&children[0], "ew_indicator", data->gps.ew_indicator);
+	BSON_APPEND_ARRAY_BEGIN(&children[0], "new", &children[1]);
+	for (int i = 0; i < (data->gps.new_count); i++)
+	{
+		BSON_APPEND_DOCUMENT_BEGIN(&children[1], "0", &children[2]);
+		BSON_APPEND_INT64(&children[2], "timestamp", data->gps.new[i].timestamp);
+		BSON_APPEND_DOCUMENT_BEGIN(&children[2], "value", &children[3]);
+		BSON_APPEND_DOUBLE(&children[3], "latitude_GGA", data->gps.new[i].value.latitude_GGA);
+		BSON_APPEND_DOUBLE(&children[3], "longitude_GGA", data->gps.new[i].value.longitude_GGA);
+		BSON_APPEND_DOUBLE(&children[3], "altitude_GGA", data->gps.new[i].value.altitude_GGA);
+		BSON_APPEND_UTF8(&children[3], "ns_indicator_GGA", data->gps.new[i].value.ns_indicator_GGA);
+		BSON_APPEND_UTF8(&children[3], "ew_indicator_GGA", data->gps.new[i].value.ew_indicator_GGA);
+		BSON_APPEND_UTF8(&children[3], "utc_time_GGA", data->gps.new[i].value.utc_time_GGA);
+		BSON_APPEND_DOUBLE(&children[3], "latitude_GLL", data->gps.new[i].value.latitude_GLL);
+		BSON_APPEND_DOUBLE(&children[3], "longitude_GLL", data->gps.new[i].value.longitude_GLL);
+		BSON_APPEND_UTF8(&children[3], "ns_indicator_GLL", data->gps.new[i].value.ns_indicator_GLL);
+		BSON_APPEND_UTF8(&children[3], "ew_indicator_GLL", data->gps.new[i].value.ew_indicator_GLL);
+		BSON_APPEND_UTF8(&children[3], "utc_time_GLL", data->gps.new[i].value.utc_time_GLL);
+		BSON_APPEND_DOUBLE(&children[3], "ground_speed_knots_VTG", data->gps.new[i].value.ground_speed_knots_VTG);
+		BSON_APPEND_DOUBLE(&children[3], "ground_speed_human_VTG", data->gps.new[i].value.ground_speed_human_VTG);
+		BSON_APPEND_DOUBLE(&children[3], "latitude_RMC", data->gps.new[i].value.latitude_RMC);
+		BSON_APPEND_DOUBLE(&children[3], "longitude_RMC", data->gps.new[i].value.longitude_RMC);
+		BSON_APPEND_UTF8(&children[3], "utc_time_RMC", data->gps.new[i].value.utc_time_RMC);
+		BSON_APPEND_UTF8(&children[3], "date_RMC", data->gps.new[i].value.date_RMC);
+		BSON_APPEND_DOUBLE(&children[3], "ground_speed_knots_RMC", data->gps.new[i].value.ground_speed_knots_RMC);
+		bson_append_document_end(&children[2], &children[3]);
+		bson_destroy(&children[3]);
+		bson_append_document_end(&children[1], &children[2]);
+		bson_destroy(&children[2]);
+	}
+	bson_append_array_end(&children[0], &children[1]);
+	bson_destroy(&children[1]);
 	BSON_APPEND_DOCUMENT_BEGIN(&children[0], "old", &children[1]);
 	BSON_APPEND_ARRAY_BEGIN(&children[1], "location", &children[2]);
 	for (int i = 0; i < (data->gps.old.location_count); i++)
@@ -381,6 +408,7 @@ void structureDelete(data_t *data) {
 	free(data->bms_hv.warnings);
 	free(data->bms_lv.values);
 	free(data->bms_lv.errors);
+	free(data->gps.new);
 	free(data->gps.old.location);
 	free(data->gps.old.time);
 	free(data->gps.old.true_track_mode);
@@ -752,6 +780,9 @@ gather_code gatherStructure(data_t *document)
                 }
                 break;
             }
+
+        // Read GPS
+        gps_struct* gps_data = readGPS();
 
 		clock_gettime(CLOCK_MONOTONIC, &tend);
 		msec = (((double)tend.tv_sec * 1000 + 1.0e-6 * tend.tv_nsec) - end);

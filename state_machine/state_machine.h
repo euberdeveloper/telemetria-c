@@ -9,6 +9,7 @@
 #include "../services/log_service/log_service.h"
 #include "../services/can_service/can_service.h"
 #include "../services/config_service/config_service.h"
+#include "../services/gps_service/gps_service.h"
 #include "../services/mongo_service/mongo_service.h"
 #include "../services/mosquitto_service/mosquitto_service.h"
 #include "../services/structure_service/structure_service.h"

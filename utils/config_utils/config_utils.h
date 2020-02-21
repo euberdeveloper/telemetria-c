@@ -30,6 +30,7 @@ typedef struct {
 
     char* can_interface;
     int sending_rate;
+    int gps_plugged;
     int verbose;
     
     char** pilots;

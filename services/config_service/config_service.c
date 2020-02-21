@@ -13,6 +13,7 @@ static void updateCondition(const config_t* config) {
     condition.mongodb.db = strdup(config->mongodb.db);
 
     condition.can.can_interface = strdup(config->can_interface);
+    condition.gps_plugged = config->gps_plugged;
     condition.verbose = config->verbose;
 
     condition.session.pilots = cloneStringsArray(config->pilots, config->pilots_count);

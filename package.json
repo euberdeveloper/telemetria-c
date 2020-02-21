@@ -6,7 +6,7 @@
   "scripts": {
     "transpile": "node javascript",
     "compile": "./compile.sh",
-    "start": "./sender.out config.json",
+    "start": "sudo ./sender.out config.json",
     "serve": "npm run compile && npm run start",
     "enable": "./enable_signal.sh",
     "idle": "./idle_signal.sh"

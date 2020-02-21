@@ -60,6 +60,8 @@ typedef struct {
     session_condition_t session;
     structure_condition_t structure;
     char* config_path;
+    int gps_plugged;
+    int gps_port;
     int verbose;
 } condition_t;
 

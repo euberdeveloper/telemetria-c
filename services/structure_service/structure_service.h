@@ -12,6 +12,7 @@
 #include "../../state_machine/state_machine_condition.h"
 #include "../can_service/can_service.h"
 #include "../log_service/log_service.h"
+#include "../gps_service/gps_service.h"
 #include "structure_identifiers.h"
 
 /* EXTERN */
@@ -128,6 +129,32 @@ typedef struct {
 } bms_lv_data;
 
 typedef struct {
+	double latitude_GGA;
+	double longitude_GGA;
+	double altitude_GGA;
+	char* ns_indicator_GGA;
+	char* ew_indicator_GGA;
+	char* utc_time_GGA;
+	double latitude_GLL;
+	double longitude_GLL;
+	char* ns_indicator_GLL;
+	char* ew_indicator_GLL;
+	char* utc_time_GLL;
+	double ground_speed_knots_VTG;
+	double ground_speed_human_VTG;
+	double latitude_RMC;
+	double longitude_RMC;
+	char* utc_time_RMC;
+	char* date_RMC;
+	double ground_speed_knots_RMC;
+} gps_new_value_data;
+
+typedef struct {
+	long timestamp;
+	gps_new_value_data value;
+} gps_new_data;
+
+typedef struct {
 	double latitude_m;
 	int latitude_o;
 	double longitude_m;
@@ -167,12 +194,8 @@ typedef struct {
 } gps_old_data;
 
 typedef struct {
-	long timestamp;
-	double latitude;
-	double longitude;
-	double altitude;
-	int ns_indicator;
-	int ew_indicator;
+	gps_new_data *new;
+	int new_count;
 	gps_old_data old;
 } gps_data;
 

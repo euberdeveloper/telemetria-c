@@ -372,6 +372,9 @@ gather_code gatherStructure(data_t *document)
                 break;
             }
 
+        // Read GPS
+        gps_struct* gps_data = readGPS();
+
 		clock_gettime(CLOCK_MONOTONIC, &tend);
 		msec = (((double)tend.tv_sec * 1000 + 1.0e-6 * tend.tv_nsec) - end);
 	} while (msec < condition.structure.sending_rate);

@@ -4,6 +4,9 @@
         "state_machine_condition.h": "c",
         "state_machine.h": "c",
         "istream": "c",
-        "log_service.h": "c"
+        "log_service.h": "c",
+        "config_service.h": "c",
+        "gps_service.h": "c",
+        "log_utils.h": "c"
     }
 }
