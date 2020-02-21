@@ -144,6 +144,8 @@ typedef struct {
 	double ground_speed_human_VTG;
 	double latitude_RMC;
 	double longitude_RMC;
+	char* ns_indicator_RMC;
+	char* ew_indicator_RMC;
 	char* utc_time_RMC;
 	char* date_RMC;
 	double ground_speed_knots_RMC;

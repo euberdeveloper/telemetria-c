@@ -111,6 +111,8 @@ gps_struct* readGPS() {
 		token = strtok(NULL,"\n");
 	}
 
+	// gpsPrint(result);
+
 	return result;
 }
 
