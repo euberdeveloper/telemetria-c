@@ -349,12 +349,22 @@ gather_code gatherStructure(data_t *document)
                             outcome = GATHER_IDLE;
                             break;
                         case 1:
-                            condition.session.selected_pilot = pilot_index;
-                            condition.session.selected_race = race_index;
-                            outcome = GATHER_ENABLE;
+                            if (pilot_index >= condition.session.pilots_count) {
+                                logWarning("Error in structure: invalid pilot from wheel");
+                                outcome = GATHER_ERROR;
+                            }
+                            else if (race_index >= condition.session.races_count) {
+                                logWarning("Error in structure: invalid race from wheel");
+                                outcome = GATHER_ERROR;
+                            }
+                            else {
+                                condition.session.selected_pilot = pilot_index;
+                                condition.session.selected_race = race_index;
+                                outcome = GATHER_ENABLE;
+                            }
                             break;
                         default:
-                            printf("Error in structure: telemetry status with no sense\n");
+                            logWarning("Error in structure: invalid status from wheel");
                             outcome = GATHER_ERROR;
                             break;
                     }

@@ -32,6 +32,7 @@ void successInsertion(int length);
 void successQuitting();
 
 void errorParsingConfig();
+void errorGatheringData();
 void errorGeneric(char* message);
 
 void debugGeneric(char* message);

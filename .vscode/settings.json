@@ -3,6 +3,7 @@
         "config_utils.h": "c",
         "state_machine_condition.h": "c",
         "state_machine.h": "c",
-        "istream": "c"
+        "istream": "c",
+        "log_service.h": "c"
     }
 }

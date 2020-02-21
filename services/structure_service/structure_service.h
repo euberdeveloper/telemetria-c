@@ -11,6 +11,7 @@
 #include <bson.h>
 #include "../../state_machine/state_machine_condition.h"
 #include "../can_service/can_service.h"
+#include "../log_service/log_service.h"
 #include "structure_identifiers.h"
 
 /* EXTERN */

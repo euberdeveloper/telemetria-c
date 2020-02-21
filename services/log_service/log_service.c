@@ -57,6 +57,10 @@ void errorParsingConfig() {
     free(message);
 }
 
+void errorGatheringData() {
+    logError("Error in gathering data");
+}
+
 void errorGeneric(char* message) {
     logError(message);
     free(message);

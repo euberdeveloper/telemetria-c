@@ -89,6 +89,7 @@ result_codes idle_state() {
             return TOGGLE;
 
         case GATHER_ERROR:
+            errorGatheringData();
             return ERROR;
     }
 }
@@ -130,6 +131,7 @@ result_codes enabled_state() {
             return REPEAT;
             
         case GATHER_ERROR:
+            errorGatheringData();
             return ERROR;
     }
 }
